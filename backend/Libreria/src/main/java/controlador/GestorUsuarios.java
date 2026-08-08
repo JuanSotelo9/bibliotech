@@ -15,6 +15,7 @@ import modelo.BusinessException;
 import modelo.persistencia.UsuarioDAO;
 import modelo.persistencia.UsuarioDTO;
 import modelo.Usuario;
+import util.Validador;
 
 public class GestorUsuarios {
     private UsuarioDAO usuarioDAO;
@@ -27,6 +28,10 @@ public class GestorUsuarios {
 
     public String registrarUsuario(HttpServletRequest request) throws IOException, SQLException {
         Usuario usuario = objectMapper.readValue(request.getReader(), Usuario.class);
+        Validador.validarNoVacio(usuario.getNombre(), "NOMBRE_REQUERIDO", "El nombre de usuario es obligatorio");
+        Validador.validarEmail(usuario.getCorreoElectronico());
+        Validador.validarLongitudMinima(usuario.getContrasena(), 6, "CONTRASENA_CORTA", "La contraseña debe tener al menos 6 caracteres");
+        Validador.validarTelefono(usuario.getNumeroTelefonico());
         UsuarioDTO usuarioDTO = new UsuarioDTO.Builder()
         	    .setNombre(usuario.getNombre())
         	    .setCorreoElectronico(usuario.getCorreoElectronico())

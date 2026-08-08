@@ -27,6 +27,7 @@ import modelo.persistencia.dao.DocumentoDAO;
 import modelo.persistencia.dao.EventoDAO;
 import modelo.persistencia.dao.LibroDAO;
 import modelo.persistencia.dao.PonenciaDAO;
+import util.Validador;
 
 public class GestorDocumentos {
 	
@@ -88,8 +89,32 @@ public class GestorDocumentos {
 				.build();
 	}
 	
+	private void validarDocumento(Documento documento) {
+		Validador.validarNoVacio(documento.getTipo(), "TIPO_REQUERIDO", "El tipo de documento es obligatorio");
+		Validador.validarNoVacio(documento.getTitulo(), "TITULO_REQUERIDO", "El título es obligatorio");
+		Validador.validarNoVacio(documento.getAutores(), "AUTORES_REQUERIDOS", "Los autores son obligatorios");
+		Validador.validarNoVacio(documento.getFechaPublicacion(), "FECHA_REQUERIDA", "La fecha de publicación es obligatoria");
+
+		switch (documento.getTipo().toLowerCase()) {
+			case "articulo":
+				Validador.validarNoVacio(documento.getSsn(), "SSN_REQUERIDO", "El SSN es obligatorio para artículos");
+				break;
+			case "libro":
+				Validador.validarNoVacio(documento.getIsbn(), "ISBN_REQUERIDO", "El ISBN es obligatorio para libros");
+				Validador.validarNoVacio(documento.getNumPaginas(), "PAGINAS_REQUERIDAS", "El número de páginas es obligatorio para libros");
+				break;
+			case "ponencia":
+				Validador.validarNoVacio(documento.getNombreCongreso(), "CONGRESO_REQUERIDO", "El congreso es obligatorio para ponencias");
+				Validador.validarNoVacio(documento.getIsbn(), "ISBN_REQUERIDO", "El ISBN es obligatorio para ponencias");
+				break;
+			default:
+				throw new BusinessException(400, "TIPO_NO_SOPORTADO", "Tipo de documento no soportado: " + documento.getTipo());
+		}
+	}
+	
 	public String crearDocumento(HttpServletRequest request, String usuario) throws IOException, SQLException {
 		Documento documento = objectMapper.readValue(request.getReader(), Documento.class);
+		validarDocumento(documento);
 		
 		DocumentoDTO.BuilderDoc builder = construirBuilder(documento, usuario);
 		
@@ -102,6 +127,7 @@ public class GestorDocumentos {
 	
 	public String modificarDocumento(HttpServletRequest request, String usuario) throws IOException, SQLException {
 		Documento documento = objectMapper.readValue(request.getReader(), Documento.class);
+		validarDocumento(documento);
 		
 		DocumentoDTO.BuilderDoc builder = construirBuilder(documento, usuario);
 		
