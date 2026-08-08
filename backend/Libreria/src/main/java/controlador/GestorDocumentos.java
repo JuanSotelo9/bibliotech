@@ -15,18 +15,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import modelo.BusinessException;
 import modelo.Documento;
-import modelo.DocumentoDTO.ArticuloDTO;
-import modelo.DocumentoDTO.DocumentoDTO;
-import modelo.DocumentoDTO.DocumentoFactory;
-import modelo.DocumentoDTO.LibroDTO;
-import modelo.DocumentoDTO.PonenciaDTO;
-import modelo.FactoryDAO.FabricaDAO;
-import modelo.OtrosDTO.EventoDTO;
-import modelo.persistenciaDAO.ArticuloDAO;
-import modelo.persistenciaDAO.DocumentoDAO;
-import modelo.persistenciaDAO.EventoDAO;
-import modelo.persistenciaDAO.LibroDAO;
-import modelo.persistenciaDAO.PonenciaDAO;
+import modelo.documento.dto.ArticuloDTO;
+import modelo.documento.dto.DocumentoDTO;
+import modelo.documento.dto.DocumentoFactory;
+import modelo.documento.dto.LibroDTO;
+import modelo.documento.dto.PonenciaDTO;
+import modelo.factory.dao.FabricaDAO;
+import modelo.otros.dto.EventoDTO;
+import modelo.persistencia.dao.ArticuloDAO;
+import modelo.persistencia.dao.DocumentoDAO;
+import modelo.persistencia.dao.EventoDAO;
+import modelo.persistencia.dao.LibroDAO;
+import modelo.persistencia.dao.PonenciaDAO;
 
 public class GestorDocumentos {
 	
@@ -96,31 +96,8 @@ public class GestorDocumentos {
 		int iddocumento = documentoDAO.crear(builder.build());
 		documento.setIddocumento(iddocumento);
 		
-		if(builder instanceof ArticuloDTO.BuilderArticulo) {
-			ArticuloDTO articulo = crearArticulo(builder, documento);
-			ArticuloDAO dao = fabrica.crearArticulo();
-			dao.crear(articulo);
-		}else if(builder instanceof LibroDTO.BuilderLibro) {
-			LibroDTO libro = crearLibro(builder, documento);
-			LibroDAO dao = fabrica.crearLibro();
-			dao.crear(libro);
-		}else if(builder instanceof PonenciaDTO.BuilderPonencia) {
-			PonenciaDTO ponencia = crearPonencia(builder, documento);
-			PonenciaDAO dao = fabrica.crearPonencia();
-			dao.crear(ponencia);
-		}
-		LocalDate fechaActual = LocalDate.now();
-
-        String fechaFormateada = fechaActual.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		EventoDTO evento = new EventoDTO.BuilderEvento()
-				.setTipoEvento("Creado")
-				.setUsuario(usuario)
-				.setDocumento(iddocumento)
-				.setFecha(fechaFormateada)
-				.build();
-		
-		eventoDAO.crear(evento);
-        return "{\"mensaje\": \""+iddocumento+"\"}";
+		DocumentoDTO dto = construirDTOEspecifico(builder, documento);
+		return procesarDocumento(dto, usuario, true);
 	}
 	
 	public String modificarDocumento(HttpServletRequest request, String usuario) throws IOException, SQLException {
@@ -130,31 +107,61 @@ public class GestorDocumentos {
 		
 		documentoDAO.actualizar(builder.build());
 		
+		DocumentoDTO dto = construirDTOEspecifico(builder, documento);
+		return procesarDocumento(dto, usuario, false);
+	}
+	
+	private DocumentoDTO construirDTOEspecifico(DocumentoDTO.BuilderDoc builder, Documento documento) {
 		if(builder instanceof ArticuloDTO.BuilderArticulo) {
-			ArticuloDTO articulo = crearArticulo(builder, documento);
-			ArticuloDAO dao = fabrica.crearArticulo();
-			dao.actualizar(articulo);
+			return crearArticulo(builder, documento);
 		}else if(builder instanceof LibroDTO.BuilderLibro) {
-			LibroDTO libro = crearLibro(builder, documento);
-			LibroDAO dao = fabrica.crearLibro();
-			dao.actualizar(libro);
+			return crearLibro(builder, documento);
 		}else if(builder instanceof PonenciaDTO.BuilderPonencia) {
-			PonenciaDTO ponencia = crearPonencia(builder, documento);
-			PonenciaDAO dao = fabrica.crearPonencia();
-			dao.actualizar(ponencia);
+			return crearPonencia(builder, documento);
 		}
+		return builder.build();
+	}
+	
+	private String procesarDocumento(DocumentoDTO dto, String usuario, boolean esCreacion) throws SQLException {
+		if(dto instanceof ArticuloDTO) {
+			ArticuloDAO dao = fabrica.crearArticulo();
+			if(esCreacion) {
+				dao.crear((ArticuloDTO) dto);
+			} else {
+				dao.actualizar((ArticuloDTO) dto);
+			}
+		}else if(dto instanceof LibroDTO) {
+			LibroDAO dao = fabrica.crearLibro();
+			if(esCreacion) {
+				dao.crear((LibroDTO) dto);
+			} else {
+				dao.actualizar((LibroDTO) dto);
+			}
+		}else if(dto instanceof PonenciaDTO) {
+			PonenciaDAO dao = fabrica.crearPonencia();
+			if(esCreacion) {
+				dao.crear((PonenciaDTO) dto);
+			} else {
+				dao.actualizar((PonenciaDTO) dto);
+			}
+		}
+		
 		LocalDate fechaActual = LocalDate.now();
-
-        String fechaFormateada = fechaActual.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		String fechaFormateada = fechaActual.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		EventoDTO evento = new EventoDTO.BuilderEvento()
-				.setTipoEvento("Modificado")
+				.setTipoEvento(esCreacion ? "Creado" : "Modificado")
 				.setUsuario(usuario)
-				.setDocumento(documento.getIddocumento())
+				.setDocumento(dto.getIdDocumento())
 				.setFecha(fechaFormateada)
 				.build();
 		
 		eventoDAO.crear(evento);
-        return "{\"mensaje\": \"Actualizado\"}";
+		
+		if(esCreacion) {
+			return "{\"mensaje\": \"" + dto.getIdDocumento() + "\"}";
+		} else {
+			return "{\"mensaje\": \"Actualizado\"}";
+		}
 	}
 
 	public String modificarEstado(int iddocumento, String estado, String usuario) throws SQLException {

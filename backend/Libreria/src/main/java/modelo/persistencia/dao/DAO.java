@@ -1,4 +1,4 @@
-package modelo.persistenciaDAO;
+package modelo.persistencia.dao;
 
 import java.sql.SQLException;
 

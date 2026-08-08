@@ -1,4 +1,4 @@
-package Servlets;
+package servlets;
 
 import java.util.Date;
 import java.security.Key;

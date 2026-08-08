@@ -1,11 +1,11 @@
-package modelo.persistenciaDAO;
+package modelo.persistencia.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import modelo.DocumentoDTO.LibroDTO;
+import modelo.documento.dto.LibroDTO;
 import modelo.persistencia.ConexionDB;
 
 public class LibroDAO implements DAO<LibroDTO>{
@@ -75,7 +75,28 @@ public class LibroDAO implements DAO<LibroDTO>{
 
 	@Override
 	public LibroDTO buscarPorNombre(String nombre) throws SQLException {
-		// TODO Auto-generated method stub
+		String sql = "SELECT l.iddocumento, l.isbn, l.numeropaginas, d.titulo, d.fechapublicacion, d.autores, d.editorial, d.estado, d.propietario, d.tipo " +
+		             "FROM libro l JOIN documento d ON l.iddocumento = d.iddocumento WHERE UPPER(d.titulo) LIKE ?";
+		try (Connection conn = ConexionDB.getInstance().getConnection();
+		     PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, "%" + nombre.toUpperCase() + "%");
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					return new LibroDTO.BuilderLibro()
+							.setIsbn(rs.getString("isbn"))
+							.setNumeroPaginas(rs.getString("numeropaginas"))
+							.setIdDocumento(rs.getInt("iddocumento"))
+							.setTitulo(rs.getString("titulo"))
+							.setFechaPublicacion(rs.getString("fechapublicacion"))
+							.setAutores(rs.getString("autores"))
+							.setEditorial(rs.getString("editorial"))
+							.setEstado(rs.getString("estado"))
+							.setPropietario(rs.getString("propietario"))
+							.setTipo(rs.getString("tipo"))
+							.build();
+				}
+			}
+		}
 		return null;
 	}
 

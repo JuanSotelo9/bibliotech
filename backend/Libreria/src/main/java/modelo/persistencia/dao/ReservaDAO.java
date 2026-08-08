@@ -1,15 +1,24 @@
-package modelo.persistenciaDAO;
+package modelo.persistencia.dao;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import modelo.OtrosDTO.ReservaDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import modelo.otros.dto.ReservaDTO;
 import modelo.persistencia.ConexionDB;
 
 public class ReservaDAO{
 
+	private static final ObjectMapper objectMapper = new ObjectMapper();
+	
 	public void crear(ReservaDTO reserva)throws SQLException{
 		String sql = "INSERT INTO reserva (fechareserva, estado, documento, usuario) VALUES (?, ?, ?, ?)";
 
@@ -50,8 +59,7 @@ public class ReservaDAO{
 	    String sql = "SELECT r.idreserva, d.titulo, d.tipo, r.fechareserva, r.fechaentrega, r.estado " +
 	                 "FROM documento d JOIN reserva r ON d.iddocumento = r.documento WHERE usuario = ?";
 
-	    StringBuilder json = new StringBuilder();
-	    json.append("[");
+	    List<Map<String, Object>> reservas = new ArrayList<>();
 
 	    try (Connection conexion = ConexionDB.getInstance().getConnection();
 	         PreparedStatement pstmt = conexion.prepareStatement(sql)) {
@@ -59,27 +67,24 @@ public class ReservaDAO{
 	        pstmt.setString(1, usuario);
 
 	        try (ResultSet rs = pstmt.executeQuery()) {
-	            boolean first = true;
 	            while (rs.next()) {
-	                if (!first) {
-	                    json.append(",");
-	                }
-	                first = false;
-
-	                json.append("{")
-	                    .append("\"idreserva\":").append(rs.getInt("idreserva")).append(",")
-	                    .append("\"titulo\":\"").append(rs.getString("titulo")).append("\",")
-	                    .append("\"tipo\":\"").append(rs.getString("tipo")).append("\",")
-	                    .append("\"fechareserva\":\"").append(rs.getDate("fechareserva")).append("\",")
-	                    .append("\"fechaentrega\":\"").append(rs.getDate("fechaentrega")).append("\",")
-	                    .append("\"estado\":\"").append(rs.getString("estado")).append("\"")
-	                    .append("}");
+	                Map<String, Object> reserva = new LinkedHashMap<>();
+	                reserva.put("idreserva", rs.getInt("idreserva"));
+	                reserva.put("titulo", rs.getString("titulo"));
+	                reserva.put("tipo", rs.getString("tipo"));
+	                reserva.put("fechareserva", String.valueOf(rs.getDate("fechareserva")));
+	                reserva.put("fechaentrega", String.valueOf(rs.getDate("fechaentrega")));
+	                reserva.put("estado", rs.getString("estado"));
+	                reservas.add(reserva);
 	            }
 	        }
 	    }
 
-	    json.append("]");
-	    return json.toString();
+	    try {
+	        return objectMapper.writeValueAsString(reservas);
+	    } catch (IOException e) {
+	        throw new SQLException("Error al serializar las reservas", e);
+	    }
 	}
 
 }

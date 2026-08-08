@@ -1,4 +1,4 @@
-package modelo.DocumentoDTO;
+package modelo.documento.dto;
 
 
 public class LibroDTO extends DocumentoDTO{
@@ -93,6 +93,12 @@ public class LibroDTO extends DocumentoDTO{
             super.setPropietario(propietario);
             return this;
         }  
+
+        @Override
+        public BuilderLibro setTipo(String tipo) {
+            super.setTipo(tipo);
+            return this;
+        }
 
         @Override
         public LibroDTO build() {

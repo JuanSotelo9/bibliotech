@@ -1,4 +1,4 @@
-package modelo.persistenciaDAO;
+package modelo.persistencia.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import modelo.DocumentoDTO.DocumentoDTO;
+import modelo.documento.dto.DocumentoDTO;
 import modelo.persistencia.ConexionDB;
 
 public class DocumentoDAO{

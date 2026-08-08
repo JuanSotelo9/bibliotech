@@ -1,4 +1,4 @@
-package modelo.persistenciaDAO;
+package modelo.persistencia.dao;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import modelo.DocumentoDTO.ArticuloDTO;
+import modelo.documento.dto.ArticuloDTO;
 import modelo.persistencia.ConexionDB;
 
 public class ArticuloDAO implements DAO<ArticuloDTO>{
@@ -26,7 +26,27 @@ public class ArticuloDAO implements DAO<ArticuloDTO>{
 
 	
 	public ArticuloDTO buscarPorNombre(String nombre) throws SQLException{
-		//Aqui ponemos la logica
+		String sql = "SELECT a.iddocumento, a.ssn, d.titulo, d.fechapublicacion, d.autores, d.editorial, d.estado, d.propietario, d.tipo " +
+		             "FROM articulo a JOIN documento d ON a.iddocumento = d.iddocumento WHERE UPPER(d.titulo) LIKE ?";
+		try (Connection conn = ConexionDB.getInstance().getConnection();
+		     PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, "%" + nombre.toUpperCase() + "%");
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					return new ArticuloDTO.BuilderArticulo()
+							.setSsn(rs.getString("ssn"))
+							.setIdDocumento(rs.getInt("iddocumento"))
+							.setTitulo(rs.getString("titulo"))
+							.setFechaPublicacion(rs.getString("fechapublicacion"))
+							.setAutores(rs.getString("autores"))
+							.setEditorial(rs.getString("editorial"))
+							.setEstado(rs.getString("estado"))
+							.setPropietario(rs.getString("propietario"))
+							.setTipo(rs.getString("tipo"))
+							.build();
+				}
+			}
+		}
 		return null;
 	}
 	

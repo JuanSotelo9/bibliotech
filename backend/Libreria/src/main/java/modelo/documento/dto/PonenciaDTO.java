@@ -1,4 +1,4 @@
-package modelo.DocumentoDTO;
+package modelo.documento.dto;
 
 public class PonenciaDTO extends DocumentoDTO {
 
@@ -90,6 +90,12 @@ public class PonenciaDTO extends DocumentoDTO {
         @Override
         public BuilderPonencia setPropietario(String propietario) {
             super.setPropietario(propietario);
+            return this;
+        }
+
+        @Override
+        public BuilderPonencia setTipo(String tipo) {
+            super.setTipo(tipo);
             return this;
         }
 

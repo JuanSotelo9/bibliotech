@@ -1,4 +1,4 @@
-package modelo.OtrosDTO;
+package modelo.otros.dto;
 
 import java.io.Serializable;
 

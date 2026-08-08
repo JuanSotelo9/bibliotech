@@ -5,9 +5,10 @@ import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class FachadaSistema {
+public enum FachadaSistema {
 	
-	private static FachadaSistema instancia;
+	INSTANCIA;
+	
 	private GestorDocumentos gestorDocumentos;
 	private GestorUsuarios gestorUsuarios;
 	private GestorReservas gestorReservas;
@@ -18,11 +19,8 @@ public class FachadaSistema {
         this.gestorReservas = new GestorReservas();
     }
 	
-	public static synchronized FachadaSistema getInstancia() {
-        if (instancia == null) {
-            instancia = new FachadaSistema();
-        }
-        return instancia;
+	public static FachadaSistema getInstancia() {
+        return INSTANCIA;
     }
 	
 	public String registrarUsuario(HttpServletRequest request) throws IOException, SQLException {

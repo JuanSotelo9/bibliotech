@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-import Servlets.JwtUtil;
+import servlets.JwtUtil;
 import modelo.BusinessException;
 import modelo.persistencia.UsuarioDAO;
 import modelo.persistencia.UsuarioDTO;

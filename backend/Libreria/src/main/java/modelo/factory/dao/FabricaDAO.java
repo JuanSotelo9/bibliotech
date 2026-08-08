@@ -1,8 +1,8 @@
-package modelo.FactoryDAO;
+package modelo.factory.dao;
 
-import modelo.persistenciaDAO.ArticuloDAO;
-import modelo.persistenciaDAO.LibroDAO;
-import modelo.persistenciaDAO.PonenciaDAO;
+import modelo.persistencia.dao.ArticuloDAO;
+import modelo.persistencia.dao.LibroDAO;
+import modelo.persistencia.dao.PonenciaDAO;
 
 public class FabricaDAO implements DAOFactory{
 

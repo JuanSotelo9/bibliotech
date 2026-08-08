@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import modelo.Reserva;
-import modelo.OtrosDTO.ReservaDTO;
-import modelo.persistenciaDAO.ReservaDAO;
+import modelo.otros.dto.ReservaDTO;
+import modelo.persistencia.dao.ReservaDAO;
 
 public class GestorReservas {
 	

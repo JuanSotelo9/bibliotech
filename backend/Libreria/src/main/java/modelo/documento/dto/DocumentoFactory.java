@@ -1,6 +1,6 @@
-package modelo.DocumentoDTO;
+package modelo.documento.dto;
 
-import modelo.DocumentoDTO.DocumentoDTO.BuilderDoc;
+import modelo.documento.dto.DocumentoDTO.BuilderDoc;
 
 public class DocumentoFactory {
     public static BuilderDoc getBuilder(String tipo) {

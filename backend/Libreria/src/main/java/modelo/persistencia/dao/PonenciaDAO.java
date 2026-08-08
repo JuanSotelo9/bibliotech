@@ -1,11 +1,11 @@
-package modelo.persistenciaDAO;
+package modelo.persistencia.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import modelo.DocumentoDTO.PonenciaDTO;
+import modelo.documento.dto.PonenciaDTO;
 import modelo.persistencia.ConexionDB;
 
 public class PonenciaDAO implements DAO<PonenciaDTO>{
@@ -69,7 +69,28 @@ public class PonenciaDAO implements DAO<PonenciaDTO>{
 
 	@Override
 	public PonenciaDTO buscarPorNombre(String nombre) throws SQLException {
-		// TODO Auto-generated method stub
+		String sql = "SELECT p.iddocumento, p.congreso, p.isbn, d.titulo, d.fechapublicacion, d.autores, d.editorial, d.estado, d.propietario, d.tipo " +
+		             "FROM ponencia p JOIN documento d ON p.iddocumento = d.iddocumento WHERE UPPER(d.titulo) LIKE ?";
+		try (Connection conn = ConexionDB.getInstance().getConnection();
+		     PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, "%" + nombre.toUpperCase() + "%");
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					return new PonenciaDTO.BuilderPonencia()
+							.setCongreso(rs.getString("congreso"))
+							.setIsbn(rs.getString("isbn"))
+							.setIdDocumento(rs.getInt("iddocumento"))
+							.setTitulo(rs.getString("titulo"))
+							.setFechaPublicacion(rs.getString("fechapublicacion"))
+							.setAutores(rs.getString("autores"))
+							.setEditorial(rs.getString("editorial"))
+							.setEstado(rs.getString("estado"))
+							.setPropietario(rs.getString("propietario"))
+							.setTipo(rs.getString("tipo"))
+							.build();
+				}
+			}
+		}
 		return null;
 	}
 

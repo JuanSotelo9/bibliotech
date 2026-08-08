@@ -1,4 +1,4 @@
-package modelo.persistenciaDAO;
+package modelo.persistencia.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import modelo.OtrosDTO.EventoDTO;
+import modelo.otros.dto.EventoDTO;
 import modelo.persistencia.ConexionDB;
 
 public class EventoDAO{

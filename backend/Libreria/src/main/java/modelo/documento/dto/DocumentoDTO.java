@@ -1,4 +1,4 @@
-package modelo.DocumentoDTO;
+package modelo.documento.dto;
 
 import java.io.Serializable;
 

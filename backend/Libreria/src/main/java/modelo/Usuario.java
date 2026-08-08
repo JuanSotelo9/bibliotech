@@ -2,7 +2,6 @@ package modelo;
 
 public class Usuario {
 	
-	private int id;
 	private String nombre;
 	private String contrasena;
 	private String correoElectronico;
@@ -13,20 +12,12 @@ public class Usuario {
 		
 	}
 
-	public int getId() {
-		return id;
-	}
-
 	public String getContrasena() {
 		return contrasena;
 	}
 
 	public void setContrasena(String contrasena) {
 		this.contrasena = contrasena;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	public String getNombre() {
