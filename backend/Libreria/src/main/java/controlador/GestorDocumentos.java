@@ -37,10 +37,14 @@ public class GestorDocumentos {
 	private EventoDAO eventoDAO;
 	
 	public GestorDocumentos() {
-		documentoDAO = new DocumentoDAO();
-		fabrica = new FabricaDAO();
-		eventoDAO = new EventoDAO();
-		objectMapper = new ObjectMapper();
+		this(new DocumentoDAO(), new FabricaDAO(), new EventoDAO());
+	}
+
+	GestorDocumentos(DocumentoDAO documentoDAO, FabricaDAO fabrica, EventoDAO eventoDAO) {
+		this.documentoDAO = documentoDAO;
+		this.fabrica = fabrica;
+		this.eventoDAO = eventoDAO;
+		this.objectMapper = new ObjectMapper();
 	}
 	
 	public DocumentoDTO.BuilderDoc construirBuilder(Documento documento, String usuario){

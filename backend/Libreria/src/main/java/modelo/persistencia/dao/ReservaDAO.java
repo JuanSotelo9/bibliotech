@@ -55,6 +55,21 @@ public class ReservaDAO{
 	    }
 	}
 	
+	public boolean existeReservaActiva(int documento) throws SQLException {
+		String sql = "SELECT COUNT(*) FROM reserva WHERE documento = ? AND estado = 'Reservado'";
+
+		try (Connection conexion = ConexionDB.getInstance().getConnection();
+		     PreparedStatement pstmt = conexion.prepareStatement(sql)) {
+			pstmt.setInt(1, documento);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					return rs.getInt(1) > 0;
+				}
+			}
+		}
+		return false;
+	}
+
 	public String consultarReservas(String usuario) throws SQLException {
 	    String sql = "SELECT r.idreserva, d.titulo, d.tipo, r.fechareserva, r.fechaentrega, r.estado " +
 	                 "FROM documento d JOIN reserva r ON d.iddocumento = r.documento WHERE usuario = ?";

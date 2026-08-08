@@ -22,8 +22,12 @@ public class GestorUsuarios {
     private ObjectMapper objectMapper;
 
     public GestorUsuarios() {
-        usuarioDAO = new UsuarioDAO();
-        objectMapper = new ObjectMapper(); // Jackson para convertir JSON
+        this(new UsuarioDAO());
+    }
+
+    GestorUsuarios(UsuarioDAO usuarioDAO) {
+        this.usuarioDAO = usuarioDAO;
+        this.objectMapper = new ObjectMapper(); // Jackson para convertir JSON
     }
 
     public String registrarUsuario(HttpServletRequest request) throws IOException, SQLException {
