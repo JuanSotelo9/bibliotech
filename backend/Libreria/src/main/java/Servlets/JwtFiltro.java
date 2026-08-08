@@ -43,9 +43,7 @@ public class JwtFiltro implements Filter {
         String headerAuth = req.getHeader("Authorization");
 
         if (headerAuth == null || !headerAuth.startsWith("Bearer ")) {
-            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            res.setContentType("application/json");
-            res.getWriter().write("{\"error\": \"Token no proporcionado o inválido\"}");
+            BaseServlet.sendError(res, HttpServletResponse.SC_UNAUTHORIZED, "TOKEN_NO_PROVIDED", "Token no proporcionado o inválido");
             return;
         }
 
@@ -56,9 +54,7 @@ public class JwtFiltro implements Filter {
             req.setAttribute("usuario", claims.getSubject()); // Seteamos el usuario en el request
             chain.doFilter(request, response); // Continuamos con la cadena de filtros
         } catch (Exception e) {
-            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            res.setContentType("application/json");
-            res.getWriter().write("{\"error\": \"Token inválido o expirado\"}");
+            BaseServlet.sendError(res, HttpServletResponse.SC_UNAUTHORIZED, "TOKEN_INVALIDO", "Token inválido o expirado");
         }
     }
 }

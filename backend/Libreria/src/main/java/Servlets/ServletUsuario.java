@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,7 +11,7 @@ import config.AppConfig;
 import controlador.FachadaSistema;
 
 @WebServlet({"/usuario/datos", "/usuario/registrar", "/usuario/login", "/usuario/documentos", "/usuario/reservas", "/usuario/consultar"})
-public class ServletUsuario extends HttpServlet {
+public class ServletUsuario extends BaseServlet {
     private static final long serialVersionUID = 1L;
     private FachadaSistema gestor;
 
@@ -31,24 +30,26 @@ public class ServletUsuario extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         setCORSHeaders(response);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
         String urlPath = request.getRequestURI().substring(request.getContextPath().length());
-        String jsonResponse;
 
-        if ("/usuario/registrar".equals(urlPath)) {
-            jsonResponse = gestor.registrarUsuario(request);
-        } else if ("/usuario/login".equals(urlPath)) {
-            jsonResponse = gestor.loginUsuario(request);
-        } else if ("/usuario/consultar".equals(urlPath)) {
-            jsonResponse = gestor.consultarUsuario(request);
-        }else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            jsonResponse = "{\"mensaje\": \"URL no encontrada\"}";
+        try {
+            String jsonResponse;
+
+            if ("/usuario/registrar".equals(urlPath)) {
+                jsonResponse = gestor.registrarUsuario(request);
+            } else if ("/usuario/login".equals(urlPath)) {
+                jsonResponse = gestor.loginUsuario(request);
+            } else if ("/usuario/consultar".equals(urlPath)) {
+                jsonResponse = gestor.consultarUsuario(request);
+            } else {
+                sendError(response, 404, "URL_NO_ENCONTRADA", "URL no encontrada");
+                return;
+            }
+
+            sendJson(response, jsonResponse);
+        } catch (Exception e) {
+            handleError(response, e);
         }
-
-        response.getWriter().write(jsonResponse);
     }
 
     @Override
@@ -56,20 +57,25 @@ public class ServletUsuario extends HttpServlet {
         setCORSHeaders(response);
         String usuario = (String) request.getAttribute("usuario");
         String urlPath = request.getRequestURI().substring(request.getContextPath().length());
-        String jsonResponse;
-        
-        if ("/usuario/datos".equals(urlPath)) {
-            jsonResponse = gestor.obtenerUsuario(usuario);
-        } else if ("/usuario/documentos".equals(urlPath)) {
-            jsonResponse = gestor.obtenerDocumentos(usuario);
-        } else if ("/usuario/reservas".equals(urlPath)) {
-            jsonResponse = gestor.obtenerReservas(usuario);
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            jsonResponse = "{\"mensaje\": \"URL no encontrada\"}";
+
+        try {
+            String jsonResponse;
+
+            if ("/usuario/datos".equals(urlPath)) {
+                jsonResponse = gestor.obtenerUsuario(usuario);
+            } else if ("/usuario/documentos".equals(urlPath)) {
+                jsonResponse = gestor.obtenerDocumentos(usuario);
+            } else if ("/usuario/reservas".equals(urlPath)) {
+                jsonResponse = gestor.obtenerReservas(usuario);
+            } else {
+                sendError(response, 404, "URL_NO_ENCONTRADA", "URL no encontrada");
+                return;
+            }
+
+            sendJson(response, jsonResponse);
+        } catch (Exception e) {
+            handleError(response, e);
         }
-        
-        response.getWriter().write(jsonResponse);
     }
 
     // Método para agregar los encabezados CORS
@@ -79,4 +85,3 @@ public class ServletUsuario extends HttpServlet {
         response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     }
 }
-
