@@ -12,11 +12,16 @@ import javax.servlet.http.HttpServletRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import modelo.Reserva;
 import modelo.OtrosDTO.ReservaDTO;
 import modelo.persistenciaDAO.ReservaDAO;
 
 public class GestorReservas {
+	
+	private static final Logger logger = LoggerFactory.getLogger(GestorReservas.class);
 	
 	private ReservaDAO reservaDAO;
 	private ObjectMapper objectMapper;
@@ -52,12 +57,12 @@ public class GestorReservas {
 		}catch (IOException e) {
         	Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("mensaje", "Error al leer JSON: " + e.getMessage());
-            System.out.print("mensaje"+"Error al leer JSON: " + e.getMessage());
+            logger.error("Error al leer JSON: {}", e.getMessage());
             return -1;
         } catch (SQLException e) {
         	Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("mensaje", "Error en la base de datos: " + e.getMessage());
-
+            logger.error("Error en la base de datos: {}", e.getMessage());
             return -1;
         }
 	}
@@ -74,12 +79,12 @@ public class GestorReservas {
 		}catch (IOException e) {
         	Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("mensaje", "Error al leer JSON: " + e.getMessage());
-            System.out.print("mensaje"+"Error al leer JSON: " + e.getMessage());
+            logger.error("Error al leer JSON: {}", e.getMessage());
             return -1;
         } catch (SQLException e) {
         	Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("mensaje", "Error en la base de datos: " + e.getMessage());
-
+            logger.error("Error en la base de datos: {}", e.getMessage());
             return -1;
         }
 	}
