@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import config.AppConfig;
 import controlador.FachadaSistema;
 
 @WebServlet({"/usuario/datos", "/usuario/registrar", "/usuario/login", "/usuario/documentos", "/usuario/reservas", "/usuario/consultar"})
@@ -73,7 +74,7 @@ public class ServletUsuario extends HttpServlet {
 
     // Método para agregar los encabezados CORS
     private void setCORSHeaders(HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Origin", AppConfig.getAllowedOrigins());
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     }

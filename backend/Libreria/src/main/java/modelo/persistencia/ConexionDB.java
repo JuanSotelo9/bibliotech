@@ -4,13 +4,15 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import config.AppConfig;
+
 public class ConexionDB {
 	
 	private static ConexionDB instance;
 	private Connection conexion;
-	private static final String URL = "jdbc:postgresql://localhost:5432/LibreriaDB";
-	private static final String USER = "postgres";
-	private static final String PASSWORD = "juan1234";
+	private static final String URL = AppConfig.getDbUrl();
+	private static final String USER = AppConfig.getDbUser();
+	private static final String PASSWORD = AppConfig.getDbPassword();
 
 	
 	private ConexionDB() throws SQLException {

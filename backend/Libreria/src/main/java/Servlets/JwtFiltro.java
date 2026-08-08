@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import io.jsonwebtoken.Claims;
 
+import config.AppConfig;
+
 @WebFilter({"/usuario/consultar", "/documento", "/documento/eventos","/usuario/datos", "/documento/crear", "/documento/modificar", "/usuario/documentos",
 		"/documento/reservar", "/documento/entregar", "/documento/eliminar", "/documento/habilitar", "/documento/titulo", "/usuario/reservas"})
 public class JwtFiltro implements Filter {
@@ -25,7 +27,7 @@ public class JwtFiltro implements Filter {
         
         // Si es una solicitud OPTIONS (preflight), respondemos directamente con 200 OK
         if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
-            res.setHeader("Access-Control-Allow-Origin", "*");
+            res.setHeader("Access-Control-Allow-Origin", AppConfig.getAllowedOrigins());
             res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
             res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
             res.setStatus(HttpServletResponse.SC_OK);  // Respondemos con un 200 OK
@@ -33,7 +35,7 @@ public class JwtFiltro implements Filter {
         }
 
         // Si no es una solicitud OPTIONS, seguimos con el proceso normal (verificar el token)
-        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Origin", AppConfig.getAllowedOrigins());
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         
