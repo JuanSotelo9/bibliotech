@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS public.usuario
     direccionfisica character varying(255) COLLATE pg_catalog."default" NOT NULL,
     numerotelefonico character varying(255) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT usuario_pk PRIMARY KEY (nombre)
-)
+);
 
 -- Crear la tabla documento
 CREATE TABLE IF NOT EXISTS public.documento
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS public.documento
         REFERENCES public.usuario (nombre) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE
-)
+);
 
 -- Crear la tabla reserva
 CREATE TABLE IF NOT EXISTS public.reserva
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS public.reserva
         REFERENCES public.usuario (nombre) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE
-)
+);
 
 -- Crear la tabla evento
 CREATE TABLE IF NOT EXISTS public.evento
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS public.evento
         REFERENCES public.usuario (nombre) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE
-)
+);
 
 -- Crear la tabla libro
 CREATE TABLE IF NOT EXISTS public.libro
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS public.libro
         REFERENCES public.documento (iddocumento) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE
-)
+);
 
 
 -- Crear la tabla
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS public.ponencia
         REFERENCES public.documento (iddocumento) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE
-)
+);
 
 -- Crear la tabla articulo
 CREATE TABLE IF NOT EXISTS public.articulo
@@ -127,5 +127,5 @@ CREATE TABLE IF NOT EXISTS public.articulo
         REFERENCES public.documento (iddocumento) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE
-)
+);
 
