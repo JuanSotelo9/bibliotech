@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Documentos</title>
+    <link rel="stylesheet" href="../css/stylesDocumentos.css">
+</head>
+<body>
+    <header>
+        <form action="paginaPrincipal.html">
+            <button class="botonDevolverse">Página Principal</button>
+        </form>
+        <h1>Documentos</h1>
+    </header> 
+   <div class="midcontainer">
+        <div class="container">
+            <div>
+                <form action="documentos.html" onsubmit="realizarConsulta()">
+                    <input type="text" class="busquedaDocumento" placeholder="Ingrese el DOCUMENTO que desea buscar." id="buscarDocumento" oninput="habilitarBoton()">
+                    <button class="botonBusquedaDocumento" id="botonBuscar" >Consultar</button>
+                </form>
+            </div>
+            <div class="document" id="libros">
+                <div class="header">LIBROS</div>
+                <div class="fields" id="librosFields"></div>
+                <div class="subarrow">
+                    <div class="arrow" onclick="nextDocument('libros')">➡</div>
+                </div>
+            </div>
+            <div class="document" id="articulos">
+                <div class="header">ARTÍCULOS</div>
+                <div class="fields" id="articulosFields"></div>
+                <div class="subarrow1">
+                    <div class="arrow" onclick="nextDocument('artículos')">➡</div>
+                </div>
+            </div>
+            <div class="document" id="ponencias">
+                <div class="header">PONENCIAS</div>
+                <div class="fields" id="ponenciasFields"></div>
+                <div class="subarrow">
+                    <div class="arrow" onclick="nextDocument('ponencias')">➡</div>
+                </div>
+            </div>
+        </div>
+   </div> 
+        <footer>
+            <p>&copy; 2025 Lista de Documentos. Todos los derechos reservados. © </p>
+        </footer>
+    <script src="../js/documentos.js"></script>
+</body>
+</html>

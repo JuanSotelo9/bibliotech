@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librería UD</title>
+    <link rel="stylesheet" href="../css/stylesPaginaPrincipal.css">
+    <script src="../js/principal.js" defer></script>
+</head>
+<body>
+    <header>
+        <form action="login.html">
+            <button class="botonCerrarSesion" onclick="borrarToken()">Cerrar Sesión</button>
+        </form>
+        <h1>Librería UD</h1>
+    </header>
+    <main>
+        <div class="contenedor">
+            <div class="izquierda">
+                <div>
+                    <form action="formularioDoc.html" >
+                        <button class="botonCrearDocumento">Crear Documento</button>
+                    </form>
+                    <form action="documentos.html" onsubmit="guardarBusqueda(event)">
+                        <input type="text" placeholder="Nombre de documento:" class="inputBuscarDocumento" id="buscarDocumento" oninput="habilitarBoton()">
+                        <button class="botonBuscarDocumento" id="botonBuscar" disabled>Buscar</button>
+                    </form>
+                </div>
+                <div class="historial">
+                    <h2>Historial de documentos</h2>
+                    <div class="tabla-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="derecha">
+                <h3>Datos de usuario</h3>
+                <p id="nombre">Nombre</p>
+                <p id="correo">Correo</p>
+                <p id="direccion">Dirección</p>
+                <p id="telefono">Número Teléfono</p>
+                <button onclick="window.location.href='reservaConsulta.html'">Reservas</button>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Librería UD. Todos los derechos reservados. © </p>
+    </footer>
+</body>
+</html>
