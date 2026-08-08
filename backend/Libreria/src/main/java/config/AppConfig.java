@@ -35,6 +35,18 @@ public class AppConfig {
 		return get("db.password");
 	}
 	
+	public static int getDbMaxPoolSize() {
+		return Integer.parseInt(get("db.maxPoolSize"));
+	}
+	
+	public static int getDbMinIdle() {
+		return Integer.parseInt(get("db.minIdle"));
+	}
+	
+	public static long getDbConnectionTimeout() {
+		return Long.parseLong(get("db.connectionTimeout"));
+	}
+	
 	public static String getJwtSecret() {
 		return get("jwt.secret");
 	}

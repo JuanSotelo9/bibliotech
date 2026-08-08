@@ -1,35 +1,36 @@
 package modelo.persistencia;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import config.AppConfig;
 
 public class ConexionDB {
 	
 	private static ConexionDB instance;
-	private Connection conexion;
-	private static final String URL = AppConfig.getDbUrl();
-	private static final String USER = AppConfig.getDbUser();
-	private static final String PASSWORD = AppConfig.getDbPassword();
-
+	private static HikariDataSource dataSource;
 	
-	private ConexionDB() throws SQLException {
-		try {
-		    Class.forName("org.postgresql.Driver"); 
-		    this.conexion = DriverManager.getConnection(URL, USER, PASSWORD);
-		} catch (ClassNotFoundException e) {
-		    throw new SQLException("Driver JDBC no encontrado", e);
-		} catch (SQLException e) {
-		    throw new SQLException("Error al conectar con la base de datos", e);
-		}
-    }
+	private ConexionDB() {
+		HikariConfig config = new HikariConfig();
+		config.setJdbcUrl(AppConfig.getDbUrl());
+		config.setUsername(AppConfig.getDbUser());
+		config.setPassword(AppConfig.getDbPassword());
+		config.setMaximumPoolSize(AppConfig.getDbMaxPoolSize());
+		config.setMinimumIdle(AppConfig.getDbMinIdle());
+		config.setConnectionTimeout(AppConfig.getDbConnectionTimeout());
+		config.setDriverClassName("org.postgresql.Driver");
+		dataSource = new HikariDataSource(config);
+	}
 	
-	public static ConexionDB getInstance() throws SQLException {
-	    if (instance == null || instance.getConnection().isClosed()) {
+	public static ConexionDB getInstance() {
+	    if (instance == null) {
 	        synchronized (ConexionDB.class) {
-	            if (instance == null || instance.getConnection().isClosed()) {
+	            if (instance == null) {
 	                instance = new ConexionDB();
 	            }
 	        }
@@ -37,17 +38,13 @@ public class ConexionDB {
 	    return instance;
 	}
 	
-	public Connection getConnection() {
-        return conexion;
+	public Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
     }
 	
 	public void closeConection() {
-        try {
-            if (conexion != null && !conexion.isClosed()) {
-            	conexion.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (dataSource != null && !dataSource.isClosed()) {
+        	dataSource.close();
         }
     }
 
