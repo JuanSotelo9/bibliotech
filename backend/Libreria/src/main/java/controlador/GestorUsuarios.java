@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import Servlets.JwtUtil;
 import modelo.persistencia.UsuarioDAO;
 import modelo.persistencia.UsuarioDTO;
@@ -32,7 +34,7 @@ public class GestorUsuarios {
             	    .setCorreoElectronico(usuario.getCorreoElectronico())
             	    .setDireccionFisica(usuario.getDireccionFisica())
             	    .setNumeroTelefonico(usuario.getNumeroTelefonico())
-            	    .setContrasena(usuario.getContrasena())
+            	    .setContrasena(BCrypt.hashpw(usuario.getContrasena(), BCrypt.gensalt()))
             	    .build();
             UsuarioDTO encontrado = usuarioDAO.buscarPorNombre(usuario.getNombre());
             if (encontrado == null) {
@@ -59,7 +61,7 @@ public class GestorUsuarios {
             UsuarioDTO encontrado = usuarioDAO.buscarPorNombre(usuario.getNombre());
 
             if (encontrado != null) {
-                if (usuario.getContrasena().equals(encontrado.getContrasena())) {
+                if (BCrypt.checkpw(usuario.getContrasena(), encontrado.getContrasena())) {
                     return "{\"token\": \"" + JwtUtil.generarToken(usuario.getNombre()) + "\"}";
                 } else {
                     return "{\"mensaje\": \"Contraseña inválida\"}";
