@@ -206,4 +206,4 @@ usuario ──┬── documento ──┬── libro
 
 ## Licencia
 
-MIT — ver archivo [LICENSE](LICENSE) para más detalles.
+MIT.
