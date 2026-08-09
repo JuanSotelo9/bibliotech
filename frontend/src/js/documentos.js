@@ -9,11 +9,8 @@ const tipos = {
 };
 
 async function fetchDocuments() {
-    let data={
-        "titulo": localStorage.getItem("titulo")
-    }
     try {
-        const documentos = await api.post(BASE_URL + '/documento/titulo', data);
+        const documentos = await documentoService.buscarPorTitulo(localStorage.getItem("titulo"));
         console.log("Documentos recibidos:", documentos);
 
         libros = documentos.filter(doc => doc.tipo === "libro");
@@ -73,10 +70,7 @@ function realizarConsulta(){
 }
 
 function ver(id){
-    let data = {
-        "iddocumento": id
-    }
-    api.post(BASE_URL + '/documento', data)
+    documentoService.buscarPorId(id)
         .then(data => {
             localStorage.setItem("Documento", JSON.stringify(data))
             location.replace("descripcionDocumento.html");

@@ -43,7 +43,7 @@ regSubmitBtn.addEventListener("click", function(event) {
         contrasena: regFormData.get("contrasena")
     };
 
-    api.postPublic(BASE_URL + "/usuario/registrar", regData)
+    usuarioService.registrar(regData)
     .then(data => {
         if (data.mensaje === "Creado") {
             alert("Usuario creado exitosamente");

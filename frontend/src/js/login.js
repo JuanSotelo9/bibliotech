@@ -25,12 +25,12 @@ submitBtn.addEventListener('click', function (event) { // REST
         contrasena: formData.get('contrasena')
     };
 
-    api.postPublic(BASE_URL + '/usuario/login', data)
+    usuarioService.login(data)
         .then(data => {
             if (data.mensaje) {
                 alert(data.mensaje);
             } else if (data.token) {
-                localStorage.setItem("token", data.token);
+                auth.setToken(data.token);
                 location.replace("paginaPrincipal.html");
             }
         }).catch(error => {

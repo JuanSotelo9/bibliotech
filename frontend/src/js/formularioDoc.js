@@ -32,10 +32,7 @@ document.getElementById("submitBtn").addEventListener("click", async function(ev
         if (haCambiado()) { 
            await modificar();
         }
-        let data = {
-            "iddocumento": iddocumento
-        }
-        api.post(BASE_URL + '/documento', data)
+        documentoService.buscarPorId(iddocumento)
             .then(data => {
                 console.log(data)
                 localStorage.setItem("Documento", JSON.stringify(data))
@@ -68,7 +65,7 @@ function crear()  {
         ssn: formData.get("ssn")
     };
 
-    return api.post(BASE_URL + '/documento/crear', data)
+    return documentoService.crear(data)
     .then(data => {
         iddocumento = data.mensaje;
     })
@@ -94,7 +91,7 @@ async function modificar() {
     };
 
     try {
-        return api.post(BASE_URL + '/documento/modificar', data);
+        return documentoService.modificar(data);
     } catch (error) {
         console.error('Error:', error);
     }

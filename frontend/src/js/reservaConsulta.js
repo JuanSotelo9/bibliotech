@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function fetchReservas() {
-    api.get(BASE_URL + '/usuario/reservas')
+    usuarioService.obtenerReservas()
         .then(reservas => agregarReservas(reservas))
         .catch(error => console.error("Error:", error));
 }
@@ -37,10 +37,7 @@ function generarAccion(reserva) {
 }
 
 function entregar(idreserva) {
-    let data = {
-        "idreserva": idreserva
-    }
-    api.post(BASE_URL + "/documento/entregar", data)
+    documentoService.entregar(idreserva)
     .then(() => {
         alert("Reserva entregada correctamente.");
         location.reload();

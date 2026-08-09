@@ -1,15 +1,12 @@
 function handle401() {
     alert("Sesion expirada. Por favor, inicia sesion de nuevo.");
-    localStorage.removeItem("token");
+    auth.clearToken();
     window.location.href = "login.html";
     throw new Error("Usuario no autorizado (401)");
 }
 
 function authHeaders() {
-    return {
-        'Authorization': `Bearer ${localStorage.getItem("token")}`,
-        'Content-Type': 'application/json'
-    };
+    return auth.getAuthHeaders();
 }
 
 async function handleErrorResponse(response) {

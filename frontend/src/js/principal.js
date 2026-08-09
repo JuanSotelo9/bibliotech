@@ -2,14 +2,14 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.removeItem("Documento");
     localStorage.removeItem("usuario");
     localStorage.removeItem("titulo");
-    api.get(BASE_URL + '/usuario/datos')
+    usuarioService.obtenerDatos()
     .then(data => {
-        insertarDato("nombre", data.nombre);
-        insertarDato("correo", data.correoElectronico);
-        insertarDato("direccion", data.direccionFisica);
-        insertarDato("telefono", data.numeroTelefonico);
+        dom.insertarDato("nombre", data.nombre);
+        dom.insertarDato("correo", data.correoElectronico);
+        dom.insertarDato("direccion", data.direccionFisica);
+        dom.insertarDato("telefono", data.numeroTelefonico);
         
-        return api.get(BASE_URL + '/usuario/documentos');
+        return documentoService.obtenerPorUsuario();
     })
     .then(data => {
         let documentos = data;
@@ -53,23 +53,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-function insertarDato(id, valor) {
-    let elemento = document.getElementById(id);
-    if (elemento) {
-        document.querySelectorAll(`p[data-dato="${id}"]`).forEach(p => p.remove());
-        let nuevoP = document.createElement("p");
-        nuevoP.innerText = valor;
-        nuevoP.dataset.dato = id;
-        elemento.parentNode.insertBefore(nuevoP, elemento.nextSibling);
-    }
-}
-
 function eliminarDocumento(id) {
-
-    let data = {
-        "iddocumento": id
-    }
-    api.post(BASE_URL + '/documento/eliminar', data)
+    documentoService.eliminar(id)
         .then(data => {
             if (data.mensaje === "Actualizado") {
                 alert("Eliminado Correctamente");
@@ -82,10 +67,7 @@ function eliminarDocumento(id) {
 }
 
 function habilitarDocumento(id) {
-    let data = {
-        "iddocumento": id
-    }
-    api.post(BASE_URL + '/documento/habilitar', data)
+    documentoService.habilitar(id)
         .then(data => {
             if (data.mensaje === "Actualizado") {
                 alert("Documento Activado Correctamente");
@@ -98,10 +80,7 @@ function habilitarDocumento(id) {
 }
 
 function verDocumento(id) {
-    let data = {
-        "iddocumento": id
-    }
-    api.post(BASE_URL + '/documento', data)
+    documentoService.buscarPorId(id)
         .then(data => {
             localStorage.setItem("Documento", JSON.stringify(data))
             location.replace("descripcionDocumento.html");
@@ -126,6 +105,8 @@ function guardarBusqueda(event) {
     }
 }
 
-function borrarToken(){
-    localStorage.removeItem("token")
+function borrarToken(event) {
+    event.preventDefault();
+    auth.clearToken();
+    window.location.href = "login.html";
 }

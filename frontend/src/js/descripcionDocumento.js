@@ -6,10 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function cargarEventos(){
     const documento = JSON.parse(documentoStr);
-    let data = {
-        "iddocumento": documento.iddocumento
-    }
-    api.post(BASE_URL + '/documento/eventos', data)
+    documentoService.obtenerEventos(documento.iddocumento)
         .then(data => {
             let listaEventos = data;
             const listaHistorial = document.getElementById("listaHistorial");
@@ -89,20 +86,14 @@ function verPropietario(propietario) {
 async function reservarDocumento() {
     try {
         const documento = JSON.parse(localStorage.getItem("Documento")); 
-        let data = {
-            "documento": documento.iddocumento
-        };
 
-        const reservarData = await api.post(BASE_URL + '/documento/reservar', data);
+        const reservarData = await documentoService.reservar(documento.iddocumento);
 
         if (reservarData.mensaje === "Actualizado") {
             alert("Documento Reservado");
         }
 
-        data = {
-            "iddocumento": documento.iddocumento
-        }
-        const obtenerData = await api.post(BASE_URL + '/documento', data);
+        const obtenerData = await documentoService.buscarPorId(documento.iddocumento);
         localStorage.setItem("Documento", JSON.stringify(obtenerData));
         location.replace("descripcionDocumento.html");
 
