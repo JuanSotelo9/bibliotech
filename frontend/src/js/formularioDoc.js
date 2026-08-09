@@ -27,7 +27,6 @@ function guardarValoresIniciales() {
 
 document.getElementById("submitBtn").addEventListener("click", async function(event) {
     event.preventDefault();
-    console.log("HOLA");
     const documento = JSON.parse(localStorage.getItem("Documento"));
     if(documento){
         if (haCambiado()) { 
@@ -36,44 +35,19 @@ document.getElementById("submitBtn").addEventListener("click", async function(ev
         let data = {
             "iddocumento": iddocumento
         }
-        fetch('/api/documento', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem("token")}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        }).then(response =>{
-            if (response.status === 401) {
-                alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-                localStorage.removeItem("token");
-                    window.location.href = "login.html";
-                throw new Error("Usuario no autorizado (401)");
-            }
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
-            }
-            return response.json();
-        }).then(data => {
-            console.log(data)
-            localStorage.setItem("Documento", JSON.stringify(data))
-             location.replace("descripcionDocumento.html");
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        api.post(BASE_URL + '/documento', data)
+            .then(data => {
+                console.log(data)
+                localStorage.setItem("Documento", JSON.stringify(data))
+                 location.replace("descripcionDocumento.html");
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         
     }else{
-        if (haCambiado()) {
-            guardarValoresIniciales();
-            if (iddocumento === "") {
-                crear();
-            } else {
-                await modificar();
-            }
-            
-        }
-         location.replace("paginaPrincipal.html");
+        await crear();
+        location.replace("paginaPrincipal.html");
     }
     
 });
@@ -94,26 +68,7 @@ function crear()  {
         ssn: formData.get("ssn")
     };
 
-    fetch('/api/documento/crear', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem("token")}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
-        if (response.status === 401) {
-            alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-            localStorage.removeItem("token");
-            window.location.href = "login.html";
-            return Promise.reject("Usuario no autorizado (401)");
-        }
-        if (!response.ok) {
-            throw new Error('Error al obtener los datos del usuario');
-        }
-        return response.json();
-    })
+    return api.post(BASE_URL + '/documento/crear', data)
     .then(data => {
         iddocumento = data.mensaje;
     })
@@ -139,26 +94,7 @@ async function modificar() {
     };
 
     try {
-        const response = await fetch('/api/documento/modificar', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem("token")}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (response.status === 401) {
-            alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-            localStorage.removeItem("token");
-            window.location.href = "login.html";
-            throw new Error("Usuario no autorizado (401)");
-        }
-        if (!response.ok) {
-            throw new Error('Error al modificar el documento');
-        }
-
-        return response.json(); // Retornar el JSON para que el siguiente fetch lo use
+        return api.post(BASE_URL + '/documento/modificar', data);
     } catch (error) {
         console.error('Error:', error);
     }
@@ -192,7 +128,6 @@ async function activarCampos(){
     let tipoDocumento = document.getElementById("tipoDocumento").value;
     document.getElementById("tipoDocumento").disabled = false;
 
-    const documento = JSON.parse(localStorage.getItem("Documento"));
     if (tipoDocumento) {
         document.getElementById("tipoDocumento").disabled = true; // Bloquear el select
 
@@ -213,21 +148,6 @@ async function activarCampos(){
 
         document.getElementById("campoSSN").style.display = (tipoDocumento === "articulo") ? "block" : "none";
         document.getElementById("ssn").disabled = !(tipoDocumento === "articulo");
-        
-        if(!documento){
-            document.querySelectorAll("#formDoc input").forEach(input => {
-                input.addEventListener("blur", async () => {
-                    if (haCambiado()) {
-                        guardarValoresIniciales();
-                        if (iddocumento === "") {
-                            crear();
-                        } else {
-                            await modificar();
-                        }
-                    }
-                });
-            });
-        }
         
     }
 }

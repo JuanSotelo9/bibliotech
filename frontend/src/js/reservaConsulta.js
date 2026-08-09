@@ -3,24 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function fetchReservas() {
-    fetch('/api/usuario/reservas', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem("token")}`,
-            'Content-Type': 'application/json'
-        }
-    }).then(response => {
-            if (response.status === 401) {
-                alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-                localStorage.removeItem("token");
-                window.location.href = "login.html";
-                throw new Error("Usuario no autorizado (401)");
-            }
-            if (!response.ok) {
-                throw new Error("Error al obtener reservas");
-            }
-            return response.json();
-    }).then(reservas => agregarReservas(reservas))
+    api.get(BASE_URL + '/usuario/reservas')
+        .then(reservas => agregarReservas(reservas))
         .catch(error => console.error("Error:", error));
 }
 
@@ -56,26 +40,7 @@ function entregar(idreserva) {
     let data = {
         "idreserva": idreserva
     }
-    fetch("/api/documento/entregar", {
-        method: "POST",
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
-        if (response.status === 401) {
-            alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-            localStorage.removeItem("token");
-            window.location.href = "login.html";
-            throw new Error("Usuario no autorizado (401)");
-        }
-        if (!response.ok) {
-            throw new Error("Error al obtener reservas");
-        }
-        return response.json();
-    })
+    api.post(BASE_URL + "/documento/entregar", data)
     .then(() => {
         alert("Reserva entregada correctamente.");
         location.reload();

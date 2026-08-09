@@ -2,44 +2,14 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.removeItem("Documento");
     localStorage.removeItem("usuario");
     localStorage.removeItem("titulo");
-    fetch('/api/usuario/datos', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem("token")}`,
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (response.status === 401) {
-            alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-            localStorage.removeItem("token");
-            window.location.href = "login.html";
-            throw new Error("Usuario no autorizado (401)");
-        }
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        return response.json();
-    })
+    api.get(BASE_URL + '/usuario/datos')
     .then(data => {
         insertarDato("nombre", data.nombre);
         insertarDato("correo", data.correoElectronico);
         insertarDato("direccion", data.direccionFisica);
         insertarDato("telefono", data.numeroTelefonico);
         
-        return fetch('/api/usuario/documentos', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem("token")}`,
-                'Content-Type': 'application/json'
-            }
-        });
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error al obtener los documentos del usuario');
-        }
-        return response.json();
+        return api.get(BASE_URL + '/usuario/documentos');
     })
     .then(data => {
         let documentos = data;
@@ -86,8 +56,10 @@ document.addEventListener("DOMContentLoaded", function () {
 function insertarDato(id, valor) {
     let elemento = document.getElementById(id);
     if (elemento) {
+        document.querySelectorAll(`p[data-dato="${id}"]`).forEach(p => p.remove());
         let nuevoP = document.createElement("p");
         nuevoP.innerText = valor;
+        nuevoP.dataset.dato = id;
         elemento.parentNode.insertBefore(nuevoP, elemento.nextSibling);
     }
 }
@@ -97,97 +69,46 @@ function eliminarDocumento(id) {
     let data = {
         "iddocumento": id
     }
-    fetch('/api/documento/eliminar', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem("token")}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    }).then(response =>{
-        if (response.status === 401) {
-            alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-            localStorage.removeItem("token");
-            window.location.href = "login.html";
-            throw new Error("Usuario no autorizado (401)");
-        }
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        return response.json();
-    }).then(data => {
-        if (data.mensaje === "Actualizado") {
-            alert("Eliminado Correctamente");
-            location.reload();
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+    api.post(BASE_URL + '/documento/eliminar', data)
+        .then(data => {
+            if (data.mensaje === "Actualizado") {
+                alert("Eliminado Correctamente");
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
 
 function habilitarDocumento(id) {
     let data = {
         "iddocumento": id
     }
-    fetch('/api/documento/habilitar', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem("token")}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    }).then(response =>{
-        if (response.status === 401) {
-            alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-            localStorage.removeItem("token");
-            window.location.href = "login.html";
-            throw new Error("Usuario no autorizado (401)");
-        }
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        return response.json();
-    }).then(data => {
-        if (data.mensaje === "Actualizado") {
-            alert("Documento Activado Correctamente");
-            location.reload();
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+    api.post(BASE_URL + '/documento/habilitar', data)
+        .then(data => {
+            if (data.mensaje === "Actualizado") {
+                alert("Documento Activado Correctamente");
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
 
 function verDocumento(id) {
     let data = {
         "iddocumento": id
     }
-    fetch('/api/documento', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem("token")}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    }).then(response =>{
-        if (response.status === 401) {
-            alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-            localStorage.removeItem("token");
-            window.location.href = "login.html";
-            throw new Error("Usuario no autorizado (401)");
-        }
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        return response.json();
-    }).then(data => {
-        localStorage.setItem("Documento", JSON.stringify(data))
-        location.replace("descripcionDocumento.html");
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+    api.post(BASE_URL + '/documento', data)
+        .then(data => {
+            localStorage.setItem("Documento", JSON.stringify(data))
+            location.replace("descripcionDocumento.html");
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
 
 function habilitarBoton() {

@@ -2,32 +2,18 @@ let libros = [];
 let articulos = [];
 let ponencias = [];
 let indices = { libros: 0, articulos: 0, ponencias: 0 };
+const tipos = {
+    get libros() { return libros; },
+    get articulos() { return articulos; },
+    get ponencias() { return ponencias; }
+};
 
 async function fetchDocuments() {
     let data={
         "titulo": localStorage.getItem("titulo")
     }
     try {
-        const response = await fetch('/api/documento/titulo', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem("token")}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (response.status === 401) {
-            alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-            localStorage.removeItem("token");
-            window.location.href = "login.html";
-            throw new Error("Usuario no autorizado (401)");
-        }
-        if (!response.ok) {
-            throw new Error('Error al modificar el documento');
-        }
-
-        const documentos = await response.json();
+        const documentos = await api.post(BASE_URL + '/documento/titulo', data);
         console.log("Documentos recibidos:", documentos);
 
         libros = documentos.filter(doc => doc.tipo === "libro");
@@ -46,7 +32,7 @@ async function fetchDocuments() {
 function displayDocument(tipo) {
     const container = document.getElementById(tipo + "Fields");
     container.innerHTML = "";
-    const data = eval(tipo)[indices[tipo]] || null;
+    const data = tipos[tipo][indices[tipo]] || null;
 
     if (data) {
         for (let key in data) {
@@ -63,7 +49,7 @@ function displayDocument(tipo) {
 }
 
 function nextDocument(tipo) {
-    if (indices[tipo] < eval(tipo).length - 1) {
+    if (indices[tipo] < tipos[tipo].length - 1) {
         indices[tipo]++;
     } else {
         indices[tipo] = 0;
@@ -90,31 +76,14 @@ function ver(id){
     let data = {
         "iddocumento": id
     }
-    fetch('/api/documento', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem("token")}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    }).then(response =>{
-        if (response.status === 401) {
-            alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-            localStorage.removeItem("token");
-            window.location.href = "login.html";
-            throw new Error("Usuario no autorizado (401)");
-        }
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        return response.json();
-    }).then(data => {
-        localStorage.setItem("Documento", JSON.stringify(data))
-        location.replace("descripcionDocumento.html");
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+    api.post(BASE_URL + '/documento', data)
+        .then(data => {
+            localStorage.setItem("Documento", JSON.stringify(data))
+            location.replace("descripcionDocumento.html");
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
 
 document.addEventListener("DOMContentLoaded", fetchDocuments);

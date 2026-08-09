@@ -25,26 +25,16 @@ submitBtn.addEventListener('click', function (event) { // REST
         contrasena: formData.get('contrasena')
     };
 
-    fetch('/api/usuario/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        return response.json();
-    }).then(data => {
-        if (data.mensaje) {
-            alert(data.mensaje);
-        } else if (data.token) {
-            localStorage.setItem("token", data.token);
-            location.replace("paginaPrincipal.html");
-        }
-    }).catch(error => {
-        console.error('Error:', error);
-    });
+    api.postPublic(BASE_URL + '/usuario/login', data)
+        .then(data => {
+            if (data.mensaje) {
+                alert(data.mensaje);
+            } else if (data.token) {
+                localStorage.setItem("token", data.token);
+                location.replace("paginaPrincipal.html");
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+        });
 });
 

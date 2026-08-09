@@ -9,37 +9,20 @@ function cargarEventos(){
     let data = {
         "iddocumento": documento.iddocumento
     }
-    fetch('/api/documento/eventos', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem("token")}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    }).then(response =>{
-        if (response.status === 401) {
-            alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-            localStorage.removeItem("token");
-            window.location.href = "login.html";
-            throw new Error("Usuario no autorizado (401)");
-        }
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        return response.json();
-    }).then(data => {
-        let listaEventos = data;
-        const listaHistorial = document.getElementById("listaHistorial");
+    api.post(BASE_URL + '/documento/eventos', data)
+        .then(data => {
+            let listaEventos = data;
+            const listaHistorial = document.getElementById("listaHistorial");
 
-        listaEventos.forEach(evento => {
-            const li = document.createElement("li");
-            li.textContent = evento;
-            listaHistorial.appendChild(li);
+            listaEventos.forEach(evento => {
+                const li = document.createElement("li");
+                li.textContent = evento;
+                listaHistorial.appendChild(li);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
 }
 
 function cargarDocumento() {
@@ -110,26 +93,8 @@ async function reservarDocumento() {
             "documento": documento.iddocumento
         };
 
-        const reservarResponse = await fetch('/api/documento/reservar', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem("token")}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
+        const reservarData = await api.post(BASE_URL + '/documento/reservar', data);
 
-        if (reservarResponse.status === 401) {
-            alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-            localStorage.removeItem("token");
-            window.location.href = "login.html";
-            throw new Error("Usuario no autorizado (401)");
-        }
-        if (!reservarResponse.ok) {
-            throw new Error('Error al modificar el documento');
-        }
-
-        const reservarData = await reservarResponse.json();
         if (reservarData.mensaje === "Actualizado") {
             alert("Documento Reservado");
         }
@@ -137,20 +102,7 @@ async function reservarDocumento() {
         data = {
             "iddocumento": documento.iddocumento
         }
-        const obtenerResponse = await fetch('/api/documento', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem("token")}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (!obtenerResponse.ok) {
-            throw new Error(`Error HTTP en obtener documento: ${obtenerResponse.status}`);
-        }
-
-        const obtenerData = await obtenerResponse.json();
+        const obtenerData = await api.post(BASE_URL + '/documento', data);
         localStorage.setItem("Documento", JSON.stringify(obtenerData));
         location.replace("descripcionDocumento.html");
 
