@@ -1,92 +1,209 @@
-# Proyecto-Modelos-1
-Proyecto desarrollado para la asignatura Modelos de Programación 1. Contiene un backend Java (servlets) que gestiona usuarios, documentos y reservas, y un frontend estático con las vistas del cliente.
+# Bibliotech - Sistema de Gestión de Biblioteca
 
-**Requisitos**
-- **Java:** JDK 21+
-- **Maven:** 3.x
-- **Base de datos:** PostgreSQL (por defecto el proyecto usa `LibreriaDB` en `localhost:5432`)
-- **Herramienta para servir archivos estáticos:** `python3` (opcional) o extensión Live Server en VS Code
+[![Java](https://img.shields.io/badge/Java-21-orange)](https://openjdk.org/projects/jdk/21/)
+[![Maven](https://img.shields.io/badge/Maven-3.x-blue)](https://maven.apache.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)](https://docs.docker.com/compose/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Instalación y configuración**
-- Clona el repositorio.
-- Crea la base de datos y tablas ejecutando el script SQL: [libreriaDB.sql](libreriaDB.sql)
-	- Ejemplo con `psql`:
-
-```bash
-# desde la carpeta del proyecto
-psql -U postgres -c "CREATE DATABASE \"LibreriaDB\";"
-psql -U postgres -d LibreriaDB -f libreriaDB.sql
-```
-
-- Configurar credenciales de conexión a la base de datos:
-	- Por defecto las credenciales están en `ConexionDB.java`. Archivo: [backend/Libreria/src/main/java/modelo/persistencia/ConexionDB.java](backend/Libreria/src/main/java/modelo/persistencia/ConexionDB.java#L1-L120)
-	- Recomendación: cambiar la contraseña y/o mover la configuración a variables de entorno o un fichero de propiedades antes de desplegar.
-
-**Construir y ejecutar el backend**
-- Compilar con Maven:
-
-```bash
-mvn -f backend/Libreria/pom.xml clean package
-```
-
-- El empaquetado genera artefactos en `backend/Libreria/target/`. Si el proyecto está configurado como `.war`, desplegar en Tomcat/servlet container. Alternativamente ejecutar desde un IDE que soporte servlets.
-
-**Ejecutar el frontend**
-- Abrir `frontend/index.html` en el navegador o servir la carpeta `frontend` con un servidor estático:
-
-```bash
-cd frontend
-python -m http.server 8000
-# luego abrir http://localhost:8000
-```
-
-**Endpoints principales (REST-like servlets)**
-- `POST /usuario/registrar` : registra un nuevo usuario.
-- `POST /usuario/login` : login, devuelve token JWT.
-- `GET /usuario/datos` : obtiene datos del usuario (requiere autenticación).
-- `GET /usuario/documentos` : lista documentos del usuario.
-- `GET /usuario/reservas` : lista reservas del usuario.
-- `POST /usuario/consultar` : consulta de usuario por criterios.
-
-- `POST /documento/crear` : crear documento (requiere autorización).
-- `POST /documento/modificar` : modificar documento.
-- `POST /documento/reservar` : reservar documento.
-- `POST /documento/entregar` : registrar devolución/entrega.
-- `POST /documento/eliminar` : eliminar documento.
-- `POST /documento/habilitar` : habilitar documento.
-- `POST /documento` : obtener documento por id/payload.
-- `POST /documento/eventos` : buscar eventos relacionados.
-- `POST /documento/titulo` : buscar por título.
-
-Los servlets principales están en `backend/Libreria/src/main/java/Servlets/` (`ServletUsuario.java`, `ServletDocumentos.java`).
-
-**Ejemplo rápido (curl)**
-- Login:
-
-```bash
-curl -X POST http://localhost:8080/usuario/login -d '{"email":"ej@ej.com","password":"pass"}' -H "Content-Type: application/json"
-```
-
-- Obtener documentos (GET):
-
-```bash
-curl http://localhost:8080/usuario/documentos
-```
-
-**Estructura del repositorio**
-- **backend/Libreria/**: código Java, `pom.xml` (compilado con `release` 21). Ver [backend/Libreria/pom.xml](backend/Libreria/pom.xml#L1-L50).
-- **frontend/**: vistas y assets (HTML, JS, CSS).
-- **libreriaDB.sql**: script de creación de la base de datos.
-
-**Buenas prácticas / Notas importantes**
-- No deje credenciales (usuario/contraseña) en el control de versiones; el proyecto actualmente incluye credenciales por defecto en `ConexionDB.java`. Cámbielas antes de compartir el repositorio.
-- Añada un mecanismo de configuración por entorno (variables de entorno o fichero `application.properties`).
-
-**Contribuir**
-- Hacer fork/branch, abrir pull request con descripción clara de cambios y pasos para reproducir.
-
-**Contacto**
-- Autor: repositorio de la asignatura. Para dudas abrir issue en el repositorio.
+Sistema full-stack para la administración de documentos bibliográficos: libros, ponencias y artículos científicos. Permite registrar usuarios, crear documentos, reservarlos y llevar un historial completo de eventos.
 
 ---
-Para más detalles ver los ficheros de implementación y los servlets en `backend/Libreria/src/main/java/`.
+
+## Stack Tecnológico
+
+| Capa | Tecnología |
+|---|---|
+| **Backend** | Java 21, Maven, Jakarta Servlets 4.0, Tomcat 9 |
+| **Persistencia** | PostgreSQL 16, HikariCP (connection pooling) |
+| **Seguridad** | JWT (jjwt 0.11.5), BCrypt (jbcrypt 0.4) |
+| **Logging** | SLF4J + Logback (rotación diaria, nivel configurable) |
+| **JSON** | Jackson 2.x |
+| **Testing** | JUnit 5, Mockito 5, H2 Database |
+| **Frontend** | Vanilla JS, Vite, nginx |
+| **DevOps** | Docker, Docker Compose, multi-stage builds |
+
+---
+
+## Estructura del Proyecto
+
+```
+bibliotech/
+├── backend/                    # API REST (Java + Maven + Servlets)
+│   ├── Dockerfile              #   Build multi-stage (Maven → Tomcat 9)
+│   ├── .dockerignore
+│   └── Libreria/
+│       ├── pom.xml
+│       └── src/
+│           ├── main/java/
+│           │   ├── config/         # AppConfig (carga properties + env vars)
+│           │   ├── controlador/    # FachadaSistema, GestorUsuarios, GestorDocumentos, GestorReservas
+│           │   ├── modelo/         # Entidades, DTOs, DAOs, BusinessException
+│           │   ├── servlets/       # Endpoints HTTP + JWT Filter
+│           │   └── util/           # Validador (input validation)
+│           ├── main/resources/     # application.properties, logback.xml
+│           └── test/java/          # Tests unitarios (JUnit 5 + Mockito)
+├── frontend/                   # SPA estática (Vanilla JS + Vite + nginx)
+│   ├── Dockerfile              #   Build multi-stage (Node → nginx)
+│   ├── nginx.conf              #   Proxy reverso /api → backend
+│   ├── vite.config.js
+│   └── src/
+│       ├── index.html
+│       ├── pages/              #   Vistas HTML
+│       ├── js/                 #   Lógica + servicios
+│       └── css/                #   Estilos (base.css con variables CSS)
+├── db/
+│   └── init.sql                # Esquema inicial de la base de datos
+├── docker-compose.yml          # Orquestación (db + backend + frontend)
+├── .env.example                # Plantilla de variables de entorno
+└── README.md
+```
+
+---
+
+## Arquitectura del Backend
+
+```
+HTTP Request → Servlet → FachadaSistema (Facade)
+                              ├── GestorUsuarios
+                              ├── GestorDocumentos
+                              └── GestorReservas
+                                     ↓
+                              DAO Layer (JDBC + HikariCP)
+                                     ↓
+                              PostgreSQL
+```
+
+- **FachadaSistema**: Singleton enum que centraliza toda la lógica de negocio
+- **Patrones**: Facade, Factory (DocumentoFactory + FabricaDAO), Builder (DTOs), DAO genérico
+- **Manejo de errores**: `BusinessException` → `handleError()` en `BaseServlet` → `ErrorResponse` JSON
+- **Seguridad**: `JwtFiltro` protege todos los endpoints salvo login/registro
+- **Soft delete**: Los documentos se marcan como "Eliminado" en lugar de borrarse
+- **Auditoría**: Cada acción queda registrada en la tabla `evento`
+
+---
+
+## API Endpoints
+
+### Autenticación
+
+| Método | Ruta | Auth | Descripción |
+|---|---|---|---|
+| `POST` | `/usuario/registrar` | No | Registro de nuevo usuario |
+| `POST` | `/usuario/login` | No | Login, retorna JWT |
+
+### Usuario (requiere JWT)
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `GET` | `/usuario/datos` | Datos del usuario autenticado |
+| `GET` | `/usuario/documentos` | Lista documentos del usuario |
+| `GET` | `/usuario/reservas` | Lista reservas del usuario |
+| `POST` | `/usuario/consultar` | Consultar datos de otro usuario |
+
+### Documentos (requiere JWT)
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `POST` | `/documento/crear` | Crear documento |
+| `POST` | `/documento/modificar` | Modificar documento existente |
+| `POST` | `/documento/reservar` | Reservar un documento |
+| `POST` | `/documento/entregar` | Marcar reserva como entregada |
+| `POST` | `/documento/eliminar` | Soft-delete de documento |
+| `POST` | `/documento/habilitar` | Reactivar documento eliminado |
+| `POST` | `/documento` | Obtener documento por ID |
+| `POST` | `/documento/eventos` | Historial de eventos del documento |
+| `POST` | `/documento/titulo` | Búsqueda de documentos por título |
+
+---
+
+## Configuración y Despliegue
+
+### Requisitos previos
+
+- [Docker](https://docs.docker.com/get-docker/) y Docker Compose
+- [Java 21+](https://adoptium.net/) y [Maven 3.x](https://maven.apache.org/) (solo para desarrollo local)
+- [Node.js 22+](https://nodejs.org/) (solo para desarrollo del frontend)
+
+### Despliegue con Docker (recomendado)
+
+```bash
+# 1. Clonar el repositorio
+git clone <repo-url>
+cd bibliotech
+
+# 2. Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tus valores reales (contraseñas, JWT secret, etc.)
+
+# 3. Levantar los servicios
+docker compose up -d
+
+# 4. Acceder a la aplicación
+# Frontend: http://localhost:3000
+# Backend:  http://localhost:8080/Libreria/
+```
+
+### Desarrollo local
+
+```bash
+# --- Backend ---
+cd backend/Libreria
+mvn clean package
+# Desplegar el .war generado en Tomcat o ejecutar desde IDE
+
+# --- Frontend ---
+cd frontend
+cp ../.env.example .env   # o configura las variables manualmente
+npm install
+npm run dev                # http://localhost:5173 con proxy /api → backend
+```
+
+---
+
+## Variables de Entorno
+
+| Variable | Descripción | Default |
+|---|---|---|
+| `DB_URL` | JDBC URL de PostgreSQL | `jdbc:postgresql://db:5432/LibreriaDB` |
+| `DB_USER` | Usuario de la base de datos | `postgres` |
+| `DB_PASSWORD` | Contraseña de la base de datos | **Requerido** |
+| `DB_MAX_POOL_SIZE` | Tamaño máximo del pool HikariCP | `10` |
+| `DB_MIN_IDLE` | Conexiones mínimas inactivas | `2` |
+| `JWT_SECRET` | Clave secreta para firmar tokens JWT | **Requerido** |
+| `CORS_ALLOWED_ORIGINS` | Origen permitido para CORS | `http://localhost:3000` |
+| `LOG_LEVEL` | Nivel de logging (TRACE/DEBUG/INFO/WARN/ERROR) | `INFO` |
+| `FRONTEND_PORT` | Puerto del contenedor frontend | `3000` |
+
+> **Importante**: Copia `.env.example` a `.env` y configura `DB_PASSWORD` y `JWT_SECRET` antes de desplegar. El archivo `.env` está en `.gitignore` y nunca debe comitearse.
+
+---
+
+## Testing
+
+```bash
+cd backend/Libreria
+mvn test
+```
+
+Incluye tests unitarios para los tres controladores de negocio y la fábrica de documentos, usando JUnit 5 + Mockito + H2 en memoria.
+
+---
+
+## Base de Datos
+
+El script `db/init.sql` crea automáticamente las tablas al iniciar el contenedor de PostgreSQL:
+
+```
+usuario ──┬── documento ──┬── libro
+          │               ├── ponencia
+          │               ├── articulo
+          │               ├── evento
+          │               └── reserva
+```
+
+---
+
+## Licencia
+
+MIT — ver archivo [LICENSE](LICENSE) para más detalles.

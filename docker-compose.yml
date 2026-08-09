@@ -3,16 +3,16 @@ services:
     image: postgres:16-alpine
     container_name: libreria-db
     environment:
-      POSTGRES_DB: LibreriaDB
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: juan1234
+      POSTGRES_DB: ${DB_NAME:-LibreriaDB}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d LibreriaDB"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-LibreriaDB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,7 +26,16 @@ services:
       db:
         condition: service_healthy
     environment:
-      TZ: America/Bogota
+      DB_URL: jdbc:postgresql://db:5432/${DB_NAME:-LibreriaDB}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_MAX_POOL_SIZE: ${DB_MAX_POOL_SIZE:-10}
+      DB_MIN_IDLE: ${DB_MIN_IDLE:-2}
+      DB_CONNECTION_TIMEOUT: ${DB_CONNECTION_TIMEOUT:-30000}
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      TZ: ${TZ:-America/Bogota}
     ports:
       - "8080:8080"
 
@@ -38,7 +47,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "80:80"
+      - "${FRONTEND_PORT:-3000}:80"
 
 volumes:
   db_data:
