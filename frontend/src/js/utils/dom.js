@@ -14,5 +14,15 @@ const dom = {
         nuevoP.innerText = valor;
         nuevoP.dataset.dato = id;
         elemento.parentNode.insertBefore(nuevoP, elemento.nextSibling);
+    },
+
+    cargando(boton, promesa) {
+        if (!boton) return promesa;
+        boton.disabled = true;
+        boton.classList.add("boton-cargando");
+        return Promise.resolve(promesa).finally(() => {
+            boton.disabled = false;
+            boton.classList.remove("boton-cargando");
+        });
     }
 };

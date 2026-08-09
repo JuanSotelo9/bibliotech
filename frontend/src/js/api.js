@@ -1,7 +1,12 @@
+let redirigiendoLogin = false;
+
 function handle401() {
-    alert("Sesion expirada. Por favor, inicia sesion de nuevo.");
     auth.clearToken();
-    window.location.href = "login.html";
+    if (!redirigiendoLogin) {
+        redirigiendoLogin = true;
+        notificacion.info("Sesión expirada. Redirigiendo al login...");
+        setTimeout(() => { window.location.href = "login.html"; }, 1500);
+    }
     throw new Error("Usuario no autorizado (401)");
 }
 
@@ -15,7 +20,7 @@ async function handleErrorResponse(response) {
         const err = await response.json();
         mensaje = `${err.codigo}: ${err.detalle}`;
     } catch (_) {}
-    alert(mensaje);
+    notificacion.error(mensaje);
     throw new Error(mensaje);
 }
 
@@ -31,30 +36,36 @@ async function checkResponse(response) {
 
 const api = {
     get(url) {
+        loading.mostrar();
         return fetch(url, {
             method: 'GET',
             headers: authHeaders()
-        }).then(checkResponse);
+        }).finally(() => loading.ocultar())
+          .then(checkResponse);
     },
 
     post(url, body) {
+        loading.mostrar();
         return fetch(url, {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify(body)
-        }).then(checkResponse);
+        }).finally(() => loading.ocultar())
+          .then(checkResponse);
     },
 
     postPublic(url, body) {
+        loading.mostrar();
         return fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
-        }).then(response => {
-            if (!response.ok) {
-                return handleErrorResponse(response);
-            }
-            return response.json();
-        });
+        }).finally(() => loading.ocultar())
+          .then(response => {
+              if (!response.ok) {
+                  return handleErrorResponse(response);
+              }
+              return response.json();
+          });
     }
 };

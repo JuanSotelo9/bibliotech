@@ -25,26 +25,32 @@ function guardarValoresIniciales() {
     valoresIniciales = obtenerValores();
 }
 
-document.getElementById("submitBtn").addEventListener("click", async function(event) {
+const submitBtn = document.getElementById("submitBtn");
+submitBtn.addEventListener("click", async function(event) {
     event.preventDefault();
-    const documento = JSON.parse(localStorage.getItem("Documento"));
-    if(documento){
-        if (haCambiado()) { 
-           await modificar();
+    submitBtn.disabled = true;
+    try {
+        const documento = JSON.parse(localStorage.getItem("Documento"));
+        if(documento){
+            if (haCambiado()) { 
+               await modificar();
+            }
+            await documentoService.buscarPorId(iddocumento)
+                .then(data => {
+                    console.log(data)
+                    localStorage.setItem("Documento", JSON.stringify(data))
+                     location.replace("descripcionDocumento.html");
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            
+        }else{
+            await crear();
+            location.replace("paginaPrincipal.html");
         }
-        documentoService.buscarPorId(iddocumento)
-            .then(data => {
-                console.log(data)
-                localStorage.setItem("Documento", JSON.stringify(data))
-                 location.replace("descripcionDocumento.html");
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        
-    }else{
-        await crear();
-        location.replace("paginaPrincipal.html");
+    } finally {
+        submitBtn.disabled = false;
     }
     
 });
@@ -98,6 +104,7 @@ async function modificar() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    if (!auth.validarSesion()) return;
     const inputs = document.querySelectorAll("#formDoc input, #formDoc button");
     inputs.forEach(input => input.disabled = true);
     document.getElementById("tipoDocumento").disabled = false;

@@ -25,10 +25,10 @@ submitBtn.addEventListener('click', function (event) { // REST
         contrasena: formData.get('contrasena')
     };
 
-    usuarioService.login(data)
+    dom.cargando(submitBtn, usuarioService.login(data))
         .then(data => {
             if (data.mensaje) {
-                alert(data.mensaje);
+                notificacion.error(data.mensaje);
             } else if (data.token) {
                 auth.setToken(data.token);
                 location.replace("paginaPrincipal.html");

@@ -1,9 +1,6 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     text-align: center;
-    background-color: #87CEFA;
-    padding: 0;
-    margin: 0;
+    background-color: var(--color-header);
 }
 
 input, input::selection {
@@ -60,7 +57,6 @@ input, input::selection {
     border-bottom: none;
 }
 
-
 .campo {
     margin-bottom: 10px;
 }
@@ -74,38 +70,26 @@ input, input::selection {
     padding: 5px;
 }
 
-footer {
-    background-color: #87cefa;
-    padding: 10px 0;
-    margin-top: 38%;
-    position: absolute;
-    text-align: center;
-    width: 100%;
-}
-
-.botonModificacionDocumento, .botonReservaDocumento {
+.botonModificacionDocumento,
+.botonReservaDocumento {
     border-radius: 2%;
     margin-top: 1%;
     width: 48%;
     font-size: 0.90em;
-    background-color: #1e90ff;
-    color: white;
     padding: 10px;
-    border: none;
-    cursor: pointer;
 }
 
 .botonReservaDocumento {
-    background-color: #1eff5a;
+    background-color: var(--color-exito);
     margin-left: 3%;
 }
 
 .botonModificacionDocumento:hover {
-    background-color: #1463b3;
+    background-color: var(--color-primary-dark);
 }
 
 .botonReservaDocumento:hover {
-    background-color: #1edb50;
+    background-color: var(--color-exito-hover);
 }
 
 .botonModificacionDocumento:active {
@@ -121,17 +105,19 @@ footer {
     margin-top: 1%;
     width: 48%;
     font-size: 0.90em;
-    background-color: #ff4d4d; /* Rojo para indicar acción de salida */
-    color: white;
+    background-color: var(--color-peligro);
     padding: 10px;
-    border: none;
-    cursor: pointer;
 }
 
 .botonSalir:hover {
-    background-color: #cc0000; /* Rojo más oscuro al pasar el mouse */
+    background-color: #cc0000;
 }
 
 .botonSalir:active {
-    background-color: #990000; /* Rojo aún más oscuro al hacer clic */
+    background-color: #990000;
+}
+
+footer {
+    margin-top: 38%;
+    position: absolute;
 }

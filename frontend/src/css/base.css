@@ -1,0 +1,213 @@
+:root {
+    --color-primary: #1e90ff;
+    --color-primary-hover: #4682b4;
+    --color-primary-dark: #1463b3;
+    --color-header: #87cefa;
+    --color-bg: #f0f8ff;
+    --color-bg-acento: #d2ebff;
+    --color-texto: #333;
+    --color-texto-suave: #666;
+    --color-borde: #ccc;
+    --color-peligro: #860000;
+    --color-peligro-active: #bc0404;
+    --color-exito: #28a745;
+    --color-exito-hover: #45a049;
+    --color-verde: #4CAF50;
+    --radius: 8px;
+    --sombra: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --fuente: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: var(--fuente);
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--fuente);
+    background-color: var(--color-bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    font-size: 36px;
+    color: var(--color-texto);
+}
+
+p {
+    color: var(--color-texto-suave);
+}
+
+header {
+    background-color: var(--color-header);
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+}
+
+header .logo img {
+    width: 50px;
+    height: 50px;
+}
+
+main {
+    flex-grow: 1;
+}
+
+footer {
+    background-color: var(--color-header);
+    padding: 10px 0;
+    text-align: center;
+    width: 100%;
+}
+
+button {
+    background-color: var(--color-primary);
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: var(--color-primary-hover);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+button.boton-cargando {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+}
+
+button.boton-cargando::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: boton-girar 0.6s linear infinite;
+}
+
+.form-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--sombra);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.form-container h2 {
+    color: var(--color-texto);
+    margin-bottom: 20px;
+}
+
+.form-field {
+    margin-bottom: 15px;
+}
+
+.form-field input,
+.form-field select,
+select {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid var(--color-borde);
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.form-field input::placeholder {
+    color: #aaa;
+}
+
+.form-field input:focus,
+select:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    background-color: #fff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid var(--color-borde);
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: var(--color-bg);
+}
+
+.botonDevolverse,
+.botonCerrarSesion {
+    background-color: var(--color-primary);
+    color: #fff;
+    padding: 1%;
+    border: 0;
+    border-radius: 6%;
+    margin-left: 30%;
+    cursor: pointer;
+    position: absolute;
+}
+
+.botonDevolverse:hover,
+.botonCerrarSesion:hover {
+    background-color: var(--color-peligro);
+}
+
+.botonDevolverse:active,
+.botonCerrarSesion:active {
+    background-color: var(--color-peligro-active);
+}
+
+.cargando-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.cargando-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--color-header);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: boton-girar 0.8s linear infinite;
+}
+
+@keyframes boton-girar {
+    to { transform: rotate(360deg); }
+}

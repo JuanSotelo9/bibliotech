@@ -1,105 +1,73 @@
-/* Estilo general del cuerpo */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f0f8ff; /* Color de fondo */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh; /* Asegura que el body ocupe toda la altura */
-    box-sizing: border-box; /* Asegura que el padding no cause desbordamiento */
-}
-
-/* Estilo para el encabezado */
-header {
-    background-color: #87cefa;
-    width: 100%;
-    text-align: center;
-    padding: 20px 0;
-}
-
-h1 {
-    font-size: 36px;
-    color: black;
-    /* color: #1e90ff; */
-    margin: 0;
-}
-
-p {
-    color: #666;
-}
-
-/* Contenedor principal utilizando CSS Grid */
 .contenedor {
     display: grid;
-    grid-template-columns: 3fr 1fr; /* La columna izquierda ocupará 3 partes y la derecha 1 parte */
-    gap: 20px; /* Espacio entre las columnas */
+    grid-template-columns: 3fr 1fr;
+    gap: 20px;
     width: 80%;
-    max-width: 1200px; /* Limita el ancho máximo para mejorar la estética */
-    margin: 20px auto; /* Centra el contenedor horizontalmente */
+    max-width: 1200px;
+    margin: 20px auto;
     margin-top: 0;
-    padding: 20px; /* Espaciado adicional dentro del contenedor */
+    padding: 20px;
     padding-top: 1%;
 }
 
-/* Estilo para el panel izquierdo */
 .izquierda {
     background-color: white;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    flex: 0 0 75%; /* Ajusta el tamaño del lado izquierdo */
-    min-width: 300px; /* Asegura un tamaño mínimo */
-    max-height: 80vh; /* Limita la altura para evitar desbordamiento hacia abajo */
+    border-radius: var(--radius);
+    box-shadow: var(--sombra);
+    flex: 0 0 75%;
+    min-width: 300px;
+    max-height: 80vh;
     display: flex;
-    flex-direction: column; /* Asegura que los elementos dentro se apilen verticalmente */
+    flex-direction: column;
 }
 
-/* Contenedor de la tabla con scroll */
 .izquierda .tabla-container {
     width: 100%;
-    height: 300px; /* Fija la altura para el contenedor de la tabla */
-    overflow-y: auto; /* Agrega un scroll vertical si el contenido excede la altura */
-    margin-top: 10px; /* Espacio entre otros elementos */
+    height: 300px;
+    overflow-y: auto;
+    margin-top: 10px;
 }
 
-/* Estilo para el panel derecho */
 .derecha {
     background-color: white;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    min-width: 300px; /* Asegura un tamaño mínimo */
+    border-radius: var(--radius);
+    box-shadow: var(--sombra);
+    min-width: 300px;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Centra verticalmente */
-    align-items: center; /* Centra horizontalmente */
-    max-height: 70vh; /* Limita la altura máxima del panel derecho */
-    overflow-y: auto; /* Agrega desplazamiento si el contenido excede la altura */
-    gap: 20px; /* Espaciado entre los elementos dentro del panel derecho */
+    justify-content: center;
+    align-items: center;
+    max-height: 70vh;
+    overflow-y: auto;
+    gap: 20px;
 }
 
-/* Estilo para la sección de búsqueda */
+.derecha p {
+    margin: 5px 0;
+}
+
+.derecha button {
+    width: 100%;
+    padding: 10px;
+}
+
 .inputBuscarDocumento {
     margin-bottom: 15px;
     gap: 10px;
     padding: 10px;
     font-size: 16px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-borde);
     border-radius: 4px;
     margin-top: 0.5%;
     width: 62%;
 }
 
-.botonCrearDocumento, .botonBuscarDocumento {
-    background-color: #1e90ff;
-    color: white;
+.botonCrearDocumento,
+.botonBuscarDocumento {
     padding: 10px;
-    border: none;
-    border-radius: 4px;
     margin-top: 0.5%;
-    cursor: pointer;
 }
 
 .botonCrearDocumento {
@@ -110,84 +78,10 @@ p {
     width: 33%;
 }
 
-.botonCrearDocumento:hover, .botonBuscarDocumento:hover {
-    background-color: #4682b4;
-}
-
-/* Estilo para el historial */
 .historial h2 {
-    color: #333;
+    color: var(--color-texto);
 }
 
 .tabla-container {
     overflow-x: auto;
 }
-
-
-/* Estilo para la tabla */
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-table, th, td {
-    border: 1px solid #ccc;
-}
-
-th, td {
-    padding: 10px;
-    text-align: left;
-}
-
-th {
-    background-color: #f0f8ff;
-}
-
-/* Estilo para la sección de usuario */
-.derecha p {
-    margin: 5px 0;
-}
-
-.derecha button {
-    width: 100%;
-    background-color: #1e90ff;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.derecha button:hover {
-    background-color: #4682b4;
-}
-
-.botonCerrarSesion {
-    background-color: #1e90ff;
-    color: white;
-    padding: 1.25%;
-    border: 0;
-    border-radius: 6%;
-
-    margin-left: 30%;
-    cursor: pointer;
-    position: absolute;
-}
-
-.botonCerrarSesion:hover {
-    background-color: #860000;
-}
-
-.botonCerrarSesion:active {
-    background-color: #bc0404;
-}
-
-/* Estilo para el pie de página */
-footer {
-    background-color: #87cefa;
-    padding: 10px 0;
-    text-align: center;
-    width: 100%;
-    bottom: 0;
-}
-

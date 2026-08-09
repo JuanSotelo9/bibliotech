@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
+    if (!auth.validarSesion()) return;
     usuarioService.consultarUsuario(localStorage.getItem("usuario"))
     .then(data => {
         dom.insertarDato("nombre", data.nombre || "No disponible");

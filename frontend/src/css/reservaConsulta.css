@@ -1,11 +1,5 @@
-* {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
 body {
-    background-color: #d2ebff;
+    background-color: var(--color-bg-acento);
     text-align: center;
     height: 100%;
     width: 100%;
@@ -16,24 +10,25 @@ table {
     margin: 20px auto;
     border-collapse: collapse;
 }
+
 th, td {
     border: 1px solid black;
     padding: 10px;
     text-align: center;
 }
+
 th {
-    background-color: #87cefa;
+    background-color: var(--color-header);
 }
+
 button {
     padding: 5px 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
+    background-color: var(--color-verde);
     border-radius: 5px;
-    cursor: pointer;
 }
+
 button:hover {
-    background-color: #45a049;
+    background-color: var(--color-exito-hover);
 }
 
 .container {
@@ -45,10 +40,10 @@ button:hover {
     display: flex;
     flex-direction: column;
 }
+
 h1 {
-    background: #87cefa;
+    background: var(--color-header);
     color: black;
-    font-size: 36px;
     padding: 1.5%;
     margin: 0;
 }
@@ -70,32 +65,9 @@ h1 {
 
 #lista-reservas {
     max-height: 100%;
-    /* overflow-y: auto; */
     list-style-type: none;
-
 }
 
 footer {
-    background: #87cefa;
     padding: 2%;
-}
-
-.botonDevolverse {
-    background-color: #1e90ff;
-    color: white;
-    padding: 1%;
-    border: 0;
-    border-radius: 6%;
-
-    margin-left: 30%;
-    cursor: pointer;
-    position: absolute;
-}
-
-.botonDevolverse:hover {
-    background-color: #860000;
-}
-
-.botonDevolverse:active {
-    background-color: #bc0404;
 }

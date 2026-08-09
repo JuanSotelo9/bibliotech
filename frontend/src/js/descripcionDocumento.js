@@ -1,5 +1,6 @@
 const documentoStr = localStorage.getItem("Documento");
 document.addEventListener("DOMContentLoaded", () => {
+    if (!auth.validarSesion()) return;
     cargarDocumento();
     cargarEventos()
 });
@@ -24,7 +25,7 @@ function cargarEventos(){
 
 function cargarDocumento() {
     if (!documentoStr) {
-        alert("No hay documento cargado.");
+        notificacion.info("No hay documento cargado.");
         return;
     }
 
@@ -74,7 +75,7 @@ function cargarDocumento() {
 
 function verPropietario(propietario) {
     if (!propietario) {
-        alert("No hay datos del propietario.");
+        notificacion.info("No hay datos del propietario.");
         return;
     }
 
@@ -90,7 +91,7 @@ async function reservarDocumento() {
         const reservarData = await documentoService.reservar(documento.iddocumento);
 
         if (reservarData.mensaje === "Actualizado") {
-            alert("Documento Reservado");
+            notificacion.exito("Documento Reservado");
         }
 
         const obtenerData = await documentoService.buscarPorId(documento.iddocumento);

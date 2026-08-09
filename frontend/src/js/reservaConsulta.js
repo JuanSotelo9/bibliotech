@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    if (!auth.validarSesion()) return;
     fetchReservas();
 });
 
@@ -29,18 +30,19 @@ function agregarReservas(reservas) {
 
 function generarAccion(reserva) {
     if (reserva.estado === "Reservado") {
-        return `<button onclick="entregar(${reserva.idreserva})">Entregar</button>`;
+        return `<button onclick="entregar(event, ${reserva.idreserva})">Entregar</button>`;
     } else if (reserva.estado === "Entregado") {
         return "Entregado";
     }
     return "";
 }
 
-function entregar(idreserva) {
-    documentoService.entregar(idreserva)
+function entregar(event, idreserva) {
+    const boton = event.currentTarget;
+    dom.cargando(boton, documentoService.entregar(idreserva))
     .then(() => {
-        alert("Reserva entregada correctamente.");
-        location.reload();
+        notificacion.exito("Reserva entregada correctamente.");
+        setTimeout(() => location.reload(), 1200);
     })
     .catch(error => console.error("Error:", error));
     

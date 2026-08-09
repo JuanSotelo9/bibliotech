@@ -43,13 +43,13 @@ regSubmitBtn.addEventListener("click", function(event) {
         contrasena: regFormData.get("contrasena")
     };
 
-    usuarioService.registrar(regData)
+    dom.cargando(regSubmitBtn, usuarioService.registrar(regData))
     .then(data => {
         if (data.mensaje === "Creado") {
-            alert("Usuario creado exitosamente");
-            location.replace("login.html");
+            notificacion.exito("Usuario creado exitosamente");
+            setTimeout(() => location.replace("login.html"), 1200);
         } else {
-            alert(data.mensaje);
+            notificacion.error(data.mensaje);
         }
     })
     .catch(error => {

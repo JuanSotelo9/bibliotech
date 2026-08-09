@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+    if (!auth.validarSesion()) return;
     localStorage.removeItem("Documento");
     localStorage.removeItem("usuario");
     localStorage.removeItem("titulo");
@@ -33,12 +34,12 @@ document.addEventListener("DOMContentLoaded", function () {
             if (doc.estado === "Disponible") {
                 const boton = document.createElement("button");
                 boton.textContent = "Eliminar";
-                boton.onclick = () => eliminarDocumento(doc.id);
+                boton.onclick = () => eliminarDocumento(doc.id, boton);
                 tdAccion.appendChild(boton);
             } else if (doc.estado === "Eliminado") {
                 const boton = document.createElement("button");
                 boton.textContent = "Habilitar";
-                boton.onclick = () => habilitarDocumento(doc.id);
+                boton.onclick = () => habilitarDocumento(doc.id, boton);
                 tdAccion.appendChild(boton);
             } else if (doc.estado === "Reservado") {
                 tdAccion.textContent = "Reservado";
@@ -53,12 +54,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-function eliminarDocumento(id) {
-    documentoService.eliminar(id)
+function eliminarDocumento(id, boton) {
+    if (!confirm("¿Seguro que deseas eliminar este documento?")) return;
+    dom.cargando(boton, documentoService.eliminar(id))
         .then(data => {
             if (data.mensaje === "Actualizado") {
-                alert("Eliminado Correctamente");
-                location.reload();
+                notificacion.exito("Eliminado Correctamente");
+                setTimeout(() => location.reload(), 1200);
             }
         })
         .catch(error => {
@@ -66,12 +68,12 @@ function eliminarDocumento(id) {
         });
 }
 
-function habilitarDocumento(id) {
-    documentoService.habilitar(id)
+function habilitarDocumento(id, boton) {
+    dom.cargando(boton, documentoService.habilitar(id))
         .then(data => {
             if (data.mensaje === "Actualizado") {
-                alert("Documento Activado Correctamente");
-                location.reload();
+                notificacion.exito("Documento Activado Correctamente");
+                setTimeout(() => location.reload(), 1200);
             }
         })
         .catch(error => {

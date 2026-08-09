@@ -80,4 +80,7 @@ function ver(id){
         });
 }
 
-document.addEventListener("DOMContentLoaded", fetchDocuments);
+document.addEventListener("DOMContentLoaded", () => {
+    if (!auth.validarSesion()) return;
+    fetchDocuments();
+});
